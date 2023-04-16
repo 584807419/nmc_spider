@@ -86,7 +86,13 @@ func savetableData(respData map[string]interface{}) {
 
 		tableNameSqlStr := fmt.Sprintf("insert into %v (date, day_info,day_temperature,day_direct,day_power,night_info,night_temperature,night_direct,night_power) values ('%v','%v','%v','%v','%v','%v','%v','%v','%v')", tableName, temp_t_date, dayInfo_weather_info, dayInfo_weather_temperature, dayInfo_wind_direct, dayInfo_wind_power, nightInfo_weather_info, nightInfo_weather_temperature, nightInfo_wind_direct, nightInfo_wind_power)
 		if !strings.Contains(tableNameSqlStr, "9999") {
-			db.InsertRow(tableNameSqlStr)
+			getOneData := fmt.Sprintf("select * from %v where date = '%v' order by id desc limit 1", tableName, temp_t_date)
+			everyday_data := db.GetData(getOneData)
+			if (everyday_data.Day_info == dayInfo_weather_info) && (everyday_data.Day_temperature == dayInfo_weather_temperature) && (everyday_data.Night_info == nightInfo_weather_info) && (everyday_data.Night_temperature == nightInfo_weather_temperature) {
+				fmt.Println("无新数据")
+			} else {
+				db.InsertRow(tableNameSqlStr)
+			}
 		}
 	}
 }
