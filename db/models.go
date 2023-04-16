@@ -8,3 +8,16 @@ type Location struct {
 	City      string
 	Valid     int
 }
+
+type EverydayData struct {
+	Id                int
+	Date              string
+	Day_info          string
+	Day_temperature   string
+	Day_direct        string
+	Day_power         string
+	Night_info        string
+	Night_temperature string
+	Night_direct      string
+	Night_power       string
+}

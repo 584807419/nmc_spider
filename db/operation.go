@@ -32,3 +32,14 @@ func InsertRow(sqlStr string) {
 	}
 	fmt.Printf("insert success, the id is %d.\n", theID)
 }
+
+// 获取单行数据
+func GetData(sqlStr string) EverydayData {
+	var everyday_data EverydayData
+	err := DB.Get(&everyday_data, sqlStr)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+	}
+	return everyday_data
+
+}
