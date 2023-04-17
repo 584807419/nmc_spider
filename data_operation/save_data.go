@@ -59,8 +59,8 @@ func saveRtableData(respData map[string]interface{}, uuid string) {
 
 	rtableNameSqlStr := fmt.Sprintf("insert into %v (date, time, temperature,humidity,rain,icomfort,info,feelst,wind_direct,wind_power,wind_speed,warn,aqi,aq) values ('%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v')", rtableName, temp_t_date, temp_t_time, temperature, humidity, rain, icomfort, info, feelst, wind_direct, wind_power, wind_speed, warn_str, aqi, aq)
 	if !strings.Contains(rtableNameSqlStr, "9999") {
-		_pk := db.InsertRow(rtableNameSqlStr)
-		logger.Infof("%v-%v-%v", uuid, "insert db success,pk:", _pk)
+		_pk := db.InsertRow(rtableNameSqlStr, uuid)
+		logger.Infof("%v-%v%v", uuid, "insert_success,pk:", _pk)
 	} else {
 		logger.Debugf("%v-%v", uuid, "没插入-发现9999")
 	}
@@ -97,12 +97,12 @@ func savetableData(respData map[string]interface{}, uuid string) {
 		tableNameSqlStr := fmt.Sprintf("insert into %v (date, day_info,day_temperature,day_direct,day_power,night_info,night_temperature,night_direct,night_power) values ('%v','%v','%v','%v','%v','%v','%v','%v','%v')", tableName, temp_t_date, dayInfo_weather_info, dayInfo_weather_temperature, dayInfo_wind_direct, dayInfo_wind_power, nightInfo_weather_info, nightInfo_weather_temperature, nightInfo_wind_direct, nightInfo_wind_power)
 		if !strings.Contains(tableNameSqlStr, "9999") {
 			getOneData := fmt.Sprintf("select * from %v where date = '%v' order by id desc limit 1", tableName, temp_t_date)
-			everyday_data := db.GetData(getOneData)
+			everyday_data := db.GetData(getOneData, uuid)
 			if (everyday_data.Day_info == dayInfo_weather_info) && (everyday_data.Day_temperature == dayInfo_weather_temperature) && (everyday_data.Night_info == nightInfo_weather_info) && (everyday_data.Night_temperature == nightInfo_weather_temperature) {
 				logger.Debugf("%v-%v", uuid, "无新数据")
 			} else {
-				_pk := db.InsertRow(tableNameSqlStr)
-				logger.Infof("%v-%v-%v", uuid, "insert db success,pk:", _pk)
+				_pk := db.InsertRow(tableNameSqlStr, uuid)
+				logger.Infof("%v-%v%v", uuid, "insert db success,pk:", _pk)
 			}
 		}
 	}

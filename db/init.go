@@ -18,7 +18,7 @@ func initDB() (DB *sqlx.DB) {
 		fmt.Printf("connect DB failed, err:%v\n", err)
 		return
 	}
-	DB.SetMaxOpenConns(20)
-	DB.SetMaxIdleConns(10)
+	DB.SetMaxOpenConns(10)
+	DB.SetMaxIdleConns(2)
 	return DB
 }
