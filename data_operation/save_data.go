@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"nmc_spider/db"
+	"nmc_spider/log_manage"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func saveRtableData(respData map[string]interface{}) {
+func saveRtableData(respData map[string]interface{}, uuid string) {
 	realData := respData["real"].(map[string]interface{})
 	realWeatherPublishTime := realData["publish_time"].(string)
 	temp_t, _ := time.ParseInLocation("2006-01-02 15:04", realWeatherPublishTime, time.Local)
@@ -47,16 +48,25 @@ func saveRtableData(respData map[string]interface{}) {
 	}
 
 	airData := respData["air"].(map[string]interface{})
-	aqi := fmt.Sprintf("%.0f", airData["aqi"].(float64))
+	aqi, ok := airData["aqi"].(string)
+	if !ok {
+		aqi = fmt.Sprintf("%.0f", airData["aqi"].(float64))
+	}
 	aq := fmt.Sprintf("%.0f", airData["aq"].(float64))
+	if aq == "9999" {
+		aq = ""
+	}
 
 	rtableNameSqlStr := fmt.Sprintf("insert into %v (date, time, temperature,humidity,rain,icomfort,info,feelst,wind_direct,wind_power,wind_speed,warn,aqi,aq) values ('%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v')", rtableName, temp_t_date, temp_t_time, temperature, humidity, rain, icomfort, info, feelst, wind_direct, wind_power, wind_speed, warn_str, aqi, aq)
 	if !strings.Contains(rtableNameSqlStr, "9999") {
-		db.InsertRow(rtableNameSqlStr)
+		_pk := db.InsertRow(rtableNameSqlStr)
+		logger.Infof("%v-%v-%v", uuid, "insert db success,pk:", _pk)
+	} else {
+		logger.Debugf("%v-%v", uuid, "没插入-发现9999")
 	}
 }
 
-func savetableData(respData map[string]interface{}) {
+func savetableData(respData map[string]interface{}, uuid string) {
 	realData := respData["real"].(map[string]interface{})
 
 	stationId := realData["station"].(map[string]interface{})["code"].(string)
@@ -89,21 +99,23 @@ func savetableData(respData map[string]interface{}) {
 			getOneData := fmt.Sprintf("select * from %v where date = '%v' order by id desc limit 1", tableName, temp_t_date)
 			everyday_data := db.GetData(getOneData)
 			if (everyday_data.Day_info == dayInfo_weather_info) && (everyday_data.Day_temperature == dayInfo_weather_temperature) && (everyday_data.Night_info == nightInfo_weather_info) && (everyday_data.Night_temperature == nightInfo_weather_temperature) {
-				fmt.Println("无新数据")
+				logger.Debugf("%v-%v", uuid, "无新数据")
 			} else {
-				db.InsertRow(tableNameSqlStr)
+				_pk := db.InsertRow(tableNameSqlStr)
+				logger.Infof("%v-%v-%v", uuid, "insert db success,pk:", _pk)
 			}
 		}
 	}
 }
 
-func SaveData(resp []byte) {
+func SaveData(resp []byte, uuid string) {
+	var logger = log_manage.FSLogger
 	var dataAttr map[string]interface{}
 	err := json.Unmarshal(resp, &dataAttr)
 	if err != nil {
-		fmt.Println(err)
+		logger.Errorf("%v-%v", uuid, err)
 	}
 	respData := dataAttr["data"].(map[string]interface{})
-	saveRtableData(respData)
-	savetableData(respData)
+	saveRtableData(respData, uuid)
+	savetableData(respData, uuid)
 }

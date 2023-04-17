@@ -1,15 +1,19 @@
 package data_operation
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"nmc_spider/db"
+	"nmc_spider/log_manage"
 	"strconv"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-func SendReq(url string) []byte {
+var logger = log_manage.FSLogger
+
+func SendReq(url, uuid string) []byte {
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Host", "www.nmc.cn")
 	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0")
@@ -23,13 +27,13 @@ func SendReq(url string) []byte {
 	req.Header.Add("Cache-Control", "no-cache")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Println(err)
+		logger.Errorf("%v-%v", uuid, err)
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println(err)
+		logger.Errorf("%v-%v", uuid, err)
 	}
 	return body
 }
@@ -37,15 +41,13 @@ func SendReq(url string) []byte {
 func GetData() {
 	location := db.GetAllLocation()
 	for _, value := range location {
-		// fmt.Println(value.Id)
-		// fmt.Println(value.Stationid)
-		// fmt.Println(value.Country)
-		// fmt.Println(value.Province)
-		// fmt.Println(value.City)
-		// fmt.Println(value.Valid)
+		time.Sleep(5 * time.Second)
+		u4 := uuid.New()
+		uuidv4 := u4.String()
+		logger.Infof("%v-%v-%v-%v", uuidv4, value.Stationid, value.Province, value.City)
 		time_stamp := strconv.FormatInt(time.Now().UnixMilli(), 10)
 		url := "http://www.nmc.cn/rest/weather?stationid=" + value.Stationid + "&_=" + time_stamp
-		resp_data := SendReq(url)
-		SaveData(resp_data)
+		resp_data := SendReq(url, uuidv4)
+		SaveData(resp_data, uuidv4)
 	}
 }

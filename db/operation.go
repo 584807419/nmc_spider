@@ -19,18 +19,18 @@ func GetAllLocation() []Location {
 }
 
 // 插入数据
-func InsertRow(sqlStr string) {
+func InsertRow(sqlStr string) int64 {
 	ret, err := DB.Exec(sqlStr)
 	if err != nil {
 		fmt.Printf("insert failed, err:%v\n", err)
-		return
+		return 0
 	}
 	theID, err := ret.LastInsertId() // 新插入数据的id
 	if err != nil {
 		fmt.Printf("get lastinsert ID failed, err:%v\n", err)
-		return
+		return 0
 	}
-	fmt.Printf("insert success, the id is %d.\n", theID)
+	return theID
 }
 
 // 获取单行数据
