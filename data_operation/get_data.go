@@ -41,7 +41,7 @@ func SendReq(url, uuid string) []byte {
 func GetData() {
 	location := db.GetAllLocation()
 	for _, value := range location {
-		time.Sleep(5 * time.Second)
+		time.Sleep(61 * time.Second)
 		u4 := uuid.New()
 		uuidv4 := u4.String()
 		logger.Infof("%v-%v-%v-%v", uuidv4, value.Stationid, value.Province, value.City)
