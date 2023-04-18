@@ -1,16 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"nmc_spider/data_operation"
 	"time"
 )
 
 func main() {
+	// data_operation.GetProvinceData()
 	for {
-		fmt.Println("开始采集")
 		data_operation.GetData()
-		time.Sleep(300 * time.Second)
+		time.Sleep(5 * time.Second)
 	}
-
 }
