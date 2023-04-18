@@ -1,7 +1,7 @@
 package data_operation
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"nmc_spider/db"
 	"nmc_spider/log_manage"
@@ -31,7 +31,7 @@ func SendReq(url, uuid string) []byte {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logger.Errorf("%v-%v", uuid, err)
 	}
@@ -47,9 +47,8 @@ func GetData() {
 		time_stamp := strconv.FormatInt(time.Now().UnixMilli(), 10)
 		url := "http://www.nmc.cn/rest/weather?stationid=" + value.Stationid + "&_=" + time_stamp
 		resp_data := SendReq(url, uuidv4)
-		SaveData(resp_data, uuidv4)
+		SaveData(resp_data, uuidv4, value.Stationid)
 		time.Sleep(5 * time.Second)
-
 	}
 }
 
