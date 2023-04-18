@@ -6,9 +6,9 @@ import (
 )
 
 func main() {
-	// data_operation.GetProvinceData()
+	data_operation.GetProvinceData()
 	for {
 		data_operation.GetData()
-		time.Sleep(5 * time.Second)
+		time.Sleep(4 * time.Second)
 	}
 }

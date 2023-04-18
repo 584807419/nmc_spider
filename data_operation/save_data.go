@@ -9,77 +9,79 @@ import (
 	"time"
 )
 
-func saveRtableData(respData map[string]interface{}, uuid string) {
+func saveRtableData(respData map[string]interface{}, uuid, stationid string) {
 	logger.Debugf("%v-%v", uuid, "实时")
-	realData := respData["real"].(map[string]interface{})
-	realWeatherPublishTime := realData["publish_time"].(string)
-	temp_t, _ := time.ParseInLocation("2006-01-02 15:04", realWeatherPublishTime, time.Local)
-	temp_t_date := temp_t.Format("2006-01-02")
-	temp_t_time := temp_t.Format("15:04")
-	realWeatherData := realData["weather"].(map[string]interface{})
+	realData, ok := respData["real"].(map[string]interface{})
+	if ok {
+		realWeatherPublishTime := realData["publish_time"].(string)
+		temp_t, _ := time.ParseInLocation("2006-01-02 15:04", realWeatherPublishTime, time.Local)
+		temp_t_date := temp_t.Format("2006-01-02")
+		temp_t_time := temp_t.Format("15:04")
+		realWeatherData := realData["weather"].(map[string]interface{})
 
-	stationId := realData["station"].(map[string]interface{})["code"].(string)
-	yearStr := strconv.FormatInt(int64(time.Now().Year()), 10)
-	rtableName := stationId + "r" + "_" + yearStr
+		yearStr := strconv.FormatInt(int64(time.Now().Year()), 10)
+		rtableName := stationid + "r" + "_" + yearStr
 
-	temperaturefloat := realWeatherData["temperature"].(float64)
-	temperature := fmt.Sprintf("%.1f", temperaturefloat)
-	humidity := fmt.Sprintf("%.1f", realWeatherData["humidity"].(float64))
-	rain := fmt.Sprintf("%.1f", realWeatherData["rain"].(float64))
-	icomfort := fmt.Sprintf("%.0f", realWeatherData["icomfort"].(float64))
-	info := realWeatherData["info"].(string)
-	feelst := fmt.Sprintf("%.1f", realWeatherData["feelst"].(float64))
+		temperaturefloat := realWeatherData["temperature"].(float64)
+		temperature := fmt.Sprintf("%.1f", temperaturefloat)
+		humidity := fmt.Sprintf("%.1f", realWeatherData["humidity"].(float64))
+		rain := fmt.Sprintf("%.1f", realWeatherData["rain"].(float64))
+		icomfort := fmt.Sprintf("%.0f", realWeatherData["icomfort"].(float64))
+		info := realWeatherData["info"].(string)
+		feelst := fmt.Sprintf("%.1f", realWeatherData["feelst"].(float64))
 
-	realWindData := realData["wind"].(map[string]interface{})
-	wind_direct := realWindData["direct"].(string)
-	if wind_direct == "9999" {
-		wind_direct = "无"
-	}
-	wind_power := realWindData["power"].(string)
-	wind_speed := fmt.Sprintf("%.1f", realWindData["speed"].(float64))
+		realWindData := realData["wind"].(map[string]interface{})
+		wind_direct := realWindData["direct"].(string)
+		if wind_direct == "9999" {
+			wind_direct = "无"
+		}
+		wind_power := realWindData["power"].(string)
+		wind_speed := fmt.Sprintf("%.1f", realWindData["speed"].(float64))
 
-	realWarnData := realData["warn"].(map[string]interface{})
-	signaltype := realWarnData["signaltype"].(string)
-	signallevel := realWarnData["signallevel"].(string)
-	issuecontent := realWarnData["issuecontent"].(string)
-	warn_str := signaltype + ":" + signallevel + "\n" + issuecontent
-	if signaltype == "9999" {
-		warn_str = ""
-	}
-	aqi := ""
-	aq := ""
-	_, ok := respData["air"].(string)
-	if !ok {
+		realWarnData := realData["warn"].(map[string]interface{})
+		signaltype := realWarnData["signaltype"].(string)
+		signallevel := realWarnData["signallevel"].(string)
+		issuecontent := realWarnData["issuecontent"].(string)
+		warn_str := signaltype + ":" + signallevel + "\n" + issuecontent
+		if signaltype == "9999" {
+			warn_str = ""
+		}
+		aqi := ""
+		aq := ""
 		airData, ok := respData["air"].(map[string]interface{})
 		if ok {
-			aqi, ok = airData["aqi"].(string)
-			if !ok {
-				aqi = fmt.Sprintf("%.0f", airData["aqi"].(float64))
+			aqifl64, ok := airData["aqi"].(float64)
+			if ok {
+				aqi = fmt.Sprintf("%.0f", aqifl64)
 			}
-			aq := fmt.Sprintf("%.0f", airData["aq"].(float64))
+			aqfl64, ok := airData["aq"].(float64)
+			if ok {
+				aq = fmt.Sprintf("%.0f", aqfl64)
+			}
 			if aq == "9999" {
 				aq = ""
 			}
+		} else {
+			logger.Debugf("%v-%v", uuid, "无空气质量数据")
 		}
+
+		rtableNameSqlStr := fmt.Sprintf("insert into %v (date, time, temperature,humidity,rain,icomfort,info,feelst,wind_direct,wind_power,wind_speed,warn,aqi,aq) values ('%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v')", rtableName, temp_t_date, temp_t_time, temperature, humidity, rain, icomfort, info, feelst, wind_direct, wind_power, wind_speed, warn_str, aqi, aq)
+		if !strings.Contains(rtableNameSqlStr, "9999") {
+			_pk := db.InsertRow(rtableNameSqlStr, uuid)
+			logger.Infof("%v %v %v%v", uuid, rtableName, "insert_success pk:", _pk)
+		} else {
+			logger.Debugf("%v-%v", uuid, "没插入-发现9999")
+		}
+	} else {
+		logger.Debugf("%v-%v", uuid, "无实时数据")
 	}
 
-	rtableNameSqlStr := fmt.Sprintf("insert into %v (date, time, temperature,humidity,rain,icomfort,info,feelst,wind_direct,wind_power,wind_speed,warn,aqi,aq) values ('%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v')", rtableName, temp_t_date, temp_t_time, temperature, humidity, rain, icomfort, info, feelst, wind_direct, wind_power, wind_speed, warn_str, aqi, aq)
-	if !strings.Contains(rtableNameSqlStr, "9999") {
-		_pk := db.InsertRow(rtableNameSqlStr, uuid)
-		logger.Infof("%v %v %v%v", uuid, rtableName, "insert_success pk:", _pk)
-	} else {
-		logger.Debugf("%v-%v", uuid, "没插入-发现9999")
-	}
 }
 
-func savetableData(respData map[string]interface{}, uuid string) {
+func savetableData(respData map[string]interface{}, uuid, stationid string) {
 	logger.Debugf("%v-%v", uuid, "预报")
-	realData := respData["real"].(map[string]interface{})
-
-	stationId := realData["station"].(map[string]interface{})["code"].(string)
 	yearStr := strconv.FormatInt(int64(time.Now().Year()), 10)
-	tableName := stationId + "_" + yearStr
-
+	tableName := stationid + "_" + yearStr
 	predictData := respData["predict"].(map[string]interface{})
 	detailSlice := predictData["detail"].([]interface{})
 	for _, HMapItem := range detailSlice {
@@ -115,15 +117,15 @@ func savetableData(respData map[string]interface{}, uuid string) {
 	}
 }
 
-func SaveData(resp []byte, uuid string) {
+func SaveData(resp []byte, uuid, stationid string) {
 	var dataAttr map[string]interface{}
 	err := json.Unmarshal(resp, &dataAttr)
 	if err != nil {
 		logger.Errorf("%v-%v", uuid, err)
 	}
 	respData := dataAttr["data"].(map[string]interface{})
-	saveRtableData(respData, uuid)
-	savetableData(respData, uuid)
+	saveRtableData(respData, uuid, stationid)
+	savetableData(respData, uuid, stationid)
 }
 
 func SaveProvinceCityData(resp []byte, uuid string) {
@@ -186,7 +188,7 @@ func saveLocationDataAndTable(hash_map_dict map[string]interface{}, uuid string)
 	if err != nil {
 		if err.Error() != "sql: no rows in result set" {
 			logger.Debugf("%v %v %v", uuid, tableRName, "开始实时表创建")
-			create_rtable_str := fmt.Sprintf("CREATE TABLE `%v`  (`id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,`date` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '日期',`time` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '时间',`temperature` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '温度',`humidity` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '相对湿度',`rain` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '降水量mm',`icomfort` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '舒适度',`info` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '天气',`feelst` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '体感温度',`wind_direct` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '风向',`wind_power` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '风力',`wind_speed` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '风速',`warn` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '预警',`aqi` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '空气质量',`aq` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '空气质量',PRIMARY KEY (`id`) USING BTREE) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;", tableRName)
+			create_rtable_str := fmt.Sprintf("CREATE TABLE `%v`  (`id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,`date` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '日期',`time` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '时间',`temperature` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '温度',`humidity` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '相对湿度',`rain` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '降水量mm',`icomfort` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '舒适度',`info` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '天气',`feelst` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '体感温度',`wind_direct` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '风向',`wind_power` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '风力',`wind_speed` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '风速',`warn` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '预警',`aqi` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '空气质量',`aq` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '空气质量',PRIMARY KEY (`id`) USING BTREE) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;", tableRName)
 			_, err := db.ExecSql(create_rtable_str, uuid)
 			if err != nil {
 				logger.Errorf("%v %v %v", uuid, tableRName, "建实时表失败")

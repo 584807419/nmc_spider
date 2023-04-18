@@ -24,7 +24,7 @@ func GetAllLocation() []Location {
 
 func GetAllProvince() []Province {
 	logger.Infof("%v", "获取省、自治区、直辖市信息")
-	sqlStr := "select * from province where valid = 1"
+	sqlStr := "select * from province where id = 31 and valid = 1"
 	var province []Province
 	// err := DB.Select(&location, sqlStr, 0)
 	err := DB.Select(&province, sqlStr)
@@ -37,7 +37,7 @@ func GetAllProvince() []Province {
 func InsertRow(sqlStr, uuid string) int64 {
 	ret, err := DB.Exec(sqlStr)
 	if err != nil {
-		fmt.Printf("insert failed, err:%v\n", err)
+		logger.Errorf("%v insert failed, err:%v", uuid, err)
 		return 0
 	}
 	theID, err := ret.LastInsertId() // 新插入数据的id
