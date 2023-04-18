@@ -9,6 +9,13 @@ type Location struct {
 	Valid     int
 }
 
+type Province struct {
+	Id    int
+	Name  string
+	Abbr  string
+	Valid int
+}
+
 type EverydayData struct {
 	Id                int
 	Date              string
