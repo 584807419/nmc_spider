@@ -46,15 +46,21 @@ func saveRtableData(respData map[string]interface{}, uuid string) {
 	if signaltype == "9999" {
 		warn_str = ""
 	}
-
-	airData := respData["air"].(map[string]interface{})
-	aqi, ok := airData["aqi"].(string)
+	aqi := ""
+	aq := ""
+	_, ok := respData["air"].(string)
 	if !ok {
-		aqi = fmt.Sprintf("%.0f", airData["aqi"].(float64))
-	}
-	aq := fmt.Sprintf("%.0f", airData["aq"].(float64))
-	if aq == "9999" {
-		aq = ""
+		airData, ok := respData["air"].(map[string]interface{})
+		if ok {
+			aqi, ok = airData["aqi"].(string)
+			if !ok {
+				aqi = fmt.Sprintf("%.0f", airData["aqi"].(float64))
+			}
+			aq := fmt.Sprintf("%.0f", airData["aq"].(float64))
+			if aq == "9999" {
+				aq = ""
+			}
+		}
 	}
 
 	rtableNameSqlStr := fmt.Sprintf("insert into %v (date, time, temperature,humidity,rain,icomfort,info,feelst,wind_direct,wind_power,wind_speed,warn,aqi,aq) values ('%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v')", rtableName, temp_t_date, temp_t_time, temperature, humidity, rain, icomfort, info, feelst, wind_direct, wind_power, wind_speed, warn_str, aqi, aq)
