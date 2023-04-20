@@ -10,7 +10,7 @@ import (
 )
 
 func saveRtableData(respData map[string]interface{}, uuid, stationid string) {
-	logger.Debugf("%v-%v", uuid, "实时")
+	// logger.Debugf("%v-%v", uuid, "实时")
 	realData, ok := respData["real"].(map[string]interface{})
 	if ok {
 		realWeatherPublishTime := realData["publish_time"].(string)
@@ -79,7 +79,7 @@ func saveRtableData(respData map[string]interface{}, uuid, stationid string) {
 }
 
 func savetableData(respData map[string]interface{}, uuid, stationid string) {
-	logger.Debugf("%v-%v", uuid, "预报")
+	// logger.Debugf("%v-%v", uuid, "预报")
 	yearStr := strconv.FormatInt(int64(time.Now().Year()), 10)
 	tableName := stationid + "_" + yearStr
 	predictData := respData["predict"].(map[string]interface{})
@@ -107,8 +107,17 @@ func savetableData(respData map[string]interface{}, uuid, stationid string) {
 		if !strings.Contains(tableNameSqlStr, "9999") {
 			getOneData := fmt.Sprintf("select * from %v where date = '%v' order by id desc limit 1", tableName, temp_t_date)
 			everyday_data := db.GetData(getOneData, uuid)
-			if (everyday_data.Day_info == dayInfo_weather_info) && (everyday_data.Day_temperature == dayInfo_weather_temperature) && (everyday_data.Night_info == nightInfo_weather_info) && (everyday_data.Night_temperature == nightInfo_weather_temperature) {
-				logger.Debugf("%v-%v", uuid, "无新数据")
+			if (everyday_data.Day_info == dayInfo_weather_info) && (everyday_data.Day_temperature == dayInfo_weather_temperature) && (everyday_data.Day_direct == dayInfo_wind_direct) && (everyday_data.Day_power == dayInfo_wind_power) && (everyday_data.Night_info == nightInfo_weather_info) && (everyday_data.Night_temperature == nightInfo_weather_temperature) && (everyday_data.Night_direct == nightInfo_wind_direct) && (everyday_data.Night_power == nightInfo_wind_power) {
+				// logger.Debugf("%v %v %v", uuid, everyday_data.Date, "无新数据")
+			} else if (everyday_data.Day_info != dayInfo_weather_info) || (everyday_data.Day_temperature != dayInfo_weather_temperature) || (everyday_data.Day_direct != dayInfo_wind_direct) || (everyday_data.Day_power != dayInfo_wind_power) || (everyday_data.Night_info != nightInfo_weather_info) || (everyday_data.Night_temperature != nightInfo_weather_temperature) || (everyday_data.Night_direct != nightInfo_wind_direct) || (everyday_data.Night_power != nightInfo_wind_power) {
+				logger.Debugf("%v %v %v", uuid, everyday_data.Date, "有新数据更新")
+				updatesql := fmt.Sprintf("UPDATE %v SET `date` = '%v', `day_info` = '%v', `day_temperature` = '%v', `day_direct` = '%v', `day_power` = '%v', `night_info` = '%v', `night_temperature` = '%v', `night_direct` = '%v', `night_power` = '%v' WHERE `id` = %v;", tableName, temp_t_date, dayInfo_weather_info, dayInfo_weather_temperature, dayInfo_wind_direct, dayInfo_wind_power, nightInfo_weather_info, nightInfo_weather_temperature, nightInfo_wind_direct, nightInfo_wind_power, everyday_data.Id)
+				rowCount, err := db.ExecSql(updatesql, uuid)
+				if err != nil {
+					logger.Errorf("%v %v %v %v", uuid, tableName, "UPDATE failed,err:", err)
+				} else {
+					logger.Infof("%v %v %v %v", uuid, tableName, "UPDATE success,row:", rowCount)
+				}
 			} else {
 				_pk := db.InsertRow(tableNameSqlStr, uuid)
 				logger.Infof("%v %v-%v%v", uuid, tableName, "insert success,pk:", _pk)
@@ -188,7 +197,7 @@ func saveLocationDataAndTable(hash_map_dict map[string]interface{}, uuid string)
 	if err != nil {
 		if err.Error() != "sql: no rows in result set" {
 			logger.Debugf("%v %v %v", uuid, tableRName, "开始实时表创建")
-			create_rtable_str := fmt.Sprintf("CREATE TABLE `%v`  (`id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,`date` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '日期',`time` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '时间',`temperature` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '温度',`humidity` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '相对湿度',`rain` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '降水量mm',`icomfort` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '舒适度',`info` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '天气',`feelst` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '体感温度',`wind_direct` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '风向',`wind_power` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '风力',`wind_speed` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '风速',`warn` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '预警',`aqi` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '空气质量',`aq` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '空气质量',PRIMARY KEY (`id`) USING BTREE) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;", tableRName)
+			create_rtable_str := fmt.Sprintf("CREATE TABLE `%v`  (`id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,`date` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '日期',`time` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '时间',`temperature` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '温度',`humidity` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '相对湿度',`rain` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '降水量mm',`icomfort` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '舒适度',`info` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '天气',`feelst` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '体感温度',`wind_direct` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '风向',`wind_power` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '风力',`wind_speed` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '风速',`warn` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '预警',`aqi` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '空气质量',`aq` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '空气质量',PRIMARY KEY (`id`) USING BTREE) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;", tableRName)
 			_, err := db.ExecSql(create_rtable_str, uuid)
 			if err != nil {
 				logger.Errorf("%v %v %v", uuid, tableRName, "建实时表失败")

@@ -24,7 +24,7 @@ func GetAllLocation() []Location {
 
 func GetAllProvince() []Province {
 	logger.Infof("%v", "获取省、自治区、直辖市信息")
-	sqlStr := "select * from province where id = 31 and valid = 1"
+	sqlStr := "select * from province where valid = 1"
 	var province []Province
 	// err := DB.Select(&location, sqlStr, 0)
 	err := DB.Select(&province, sqlStr)
