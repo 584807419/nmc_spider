@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	data_operation.GetProvinceData()
+	// data_operation.GetProvinceData()
 	for {
 		data_operation.GetData()
 		time.Sleep(60 * time.Second)

@@ -48,10 +48,18 @@ func InsertRow(sqlStr, uuid string) int64 {
 	return theID
 }
 
-func GetData(sqlStr, uuid string) EverydayData {
+func GetData(sqlStr, uuid string) (EverydayData, error) {
 	var everyday_data EverydayData
-	_ = DB.Get(&everyday_data, sqlStr)
-	return everyday_data
+	err := DB.Get(&everyday_data, sqlStr)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			logger.Errorf("%v %v %v", uuid, "没查到数据", sqlStr)
+		} else {
+			logger.Errorf("%v", uuid, err.Error())
+		}
+
+	}
+	return everyday_data, err
 }
 
 func GetMultiData(sqlStr, uuid string) Location {
@@ -67,13 +75,12 @@ func GetMultiData(sqlStr, uuid string) Location {
 func ExecSql(sqlStr, uuid string) (int64, error) {
 	ret, err := DB.Exec(sqlStr)
 	if err != nil {
-		logger.Errorf("%v exec failed, err:%v", uuid, err)
+		logger.Errorf("%v ExecSql err:%v", uuid, err)
 	}
 	n, _ := ret.RowsAffected() // 操作影响的行数
 	if err != nil {
 		logger.Errorf("%v get RowsAffected  failed, err:%v", uuid, err)
 	}
-	logger.Debugf("%v exec success, affected rows:%v", uuid, n)
 	return n, err
 }
 
