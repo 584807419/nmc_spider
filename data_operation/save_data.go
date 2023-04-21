@@ -133,11 +133,13 @@ func SaveData(resp []byte, uuid, stationid string) {
 	var dataAttr map[string]interface{}
 	err := json.Unmarshal(resp, &dataAttr)
 	if err != nil {
-		logger.Errorf("%v json解析出错 %v", uuid, err)
+		logger.Errorf("%v json解析出错 %v, 原数据:", uuid, err, resp)
+	} else {
+		respData := dataAttr["data"].(map[string]interface{})
+		saveRtableData(respData, uuid, stationid)
+		savetableData(respData, uuid, stationid)
 	}
-	respData := dataAttr["data"].(map[string]interface{})
-	saveRtableData(respData, uuid, stationid)
-	savetableData(respData, uuid, stationid)
+
 }
 
 func SaveProvinceCityData(resp []byte, uuid string) {
