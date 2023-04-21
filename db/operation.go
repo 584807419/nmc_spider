@@ -8,6 +8,7 @@ import (
 var logger = log_manage.FSLogger
 
 func GetAllLocation() []Location {
+	// sqlStr := "select * from location where id = 1872 and valid = 1"
 	sqlStr := "select * from location where valid = 1"
 	var location []Location
 	// err := DB.Select(&location, sqlStr, 0)
@@ -75,13 +76,15 @@ func GetMultiData(sqlStr, uuid string) Location {
 func ExecSql(sqlStr, uuid string) (int64, error) {
 	ret, err := DB.Exec(sqlStr)
 	if err != nil {
-		logger.Errorf("%v ExecSql err:%v", uuid, err)
+		logger.Errorf("%v ExecSql:%v err:%v", uuid, sqlStr, err)
+		return 0, err
+	} else {
+		n, _ := ret.RowsAffected() // 操作影响的行数
+		if err != nil {
+			logger.Errorf("%v get RowsAffected failed, sql:%v err:%v", uuid, sqlStr, err)
+		}
+		return n, err
 	}
-	n, _ := ret.RowsAffected() // 操作影响的行数
-	if err != nil {
-		logger.Errorf("%v get RowsAffected  failed, err:%v", uuid, err)
-	}
-	return n, err
 }
 
 func GetLocationRec(sqlStr, uuid string) (Location, error) {
