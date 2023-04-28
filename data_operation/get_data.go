@@ -28,12 +28,12 @@ func GetData(wg *sync.WaitGroup) {
 				"uuid":      uuidv4,
 				"stationid": value.Stationid,
 			}
-			// 无缓冲 阻塞
+			// 无缓冲 没接收的话会阻塞
 			logger.Infof("%v %v", uuidv4, "往无缓冲通道中发送")
 			message_queue.TempUrlChan <- urlHashMap
 			// resp_data := HttpGet(url, uuidv4)
 			// SaveData(resp_data, uuidv4, value.Stationid)
-			time.Sleep(3 * time.Second)
+			// time.Sleep(3 * time.Second)
 		}
 	}
 	// wg.Done()
