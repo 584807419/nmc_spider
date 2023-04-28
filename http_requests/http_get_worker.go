@@ -5,10 +5,13 @@ import (
 	"net/http"
 	"nmc_spider/message_queue"
 	"sync"
+	"time"
 )
 
 func HttpGetWorker(wg *sync.WaitGroup) {
-	for {
+	// 定时器：每隔2秒发一次请求，生产者发过来的多快咱这也要控制好速度
+	ticker := time.NewTicker(time.Second * 2)
+	for range ticker.C {
 		urlHashMap, ok := <-message_queue.TempUrlChan
 		logger.Infof("HttpGetWorker %v", "从无缓冲通道中获取")
 		if ok {
