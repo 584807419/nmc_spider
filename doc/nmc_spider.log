@@ -1,0 +1,136 @@
+2023-04-28 11:59:48.853	INFO	data_operation/get_data.go:24	aad8c4cb-a5d8-4c43-b821-88509c0fdcd3 58238 江苏省 南京
+2023-04-28 11:59:48.859	INFO	data_operation/get_data.go:32	aad8c4cb-a5d8-4c43-b821-88509c0fdcd3 往3缓冲区通道中发送
+2023-04-28 11:59:48.860	INFO	data_operation/get_data.go:24	4ef59ab7-5830-4eb6-a280-9845639e2d99 58343 江苏省 常州
+2023-04-28 11:59:48.860	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从3缓冲区通道中获取
+2023-04-28 11:59:48.860	INFO	data_operation/get_data.go:32	4ef59ab7-5830-4eb6-a280-9845639e2d99 往3缓冲区通道中发送
+2023-04-28 11:59:48.860	INFO	data_operation/get_data.go:24	15e04d85-9975-4ae6-9aa6-19f8eb5ccd0f 58145 江苏省 楚州
+2023-04-28 11:59:48.861	INFO	data_operation/get_data.go:32	15e04d85-9975-4ae6-9aa6-19f8eb5ccd0f 往3缓冲区通道中发送
+2023-04-28 11:59:48.861	INFO	data_operation/get_data.go:24	94d4dc1d-9ee8-4e50-8c11-31166789398b 58251 江苏省 东台
+2023-04-28 11:59:48.862	INFO	data_operation/get_data.go:32	94d4dc1d-9ee8-4e50-8c11-31166789398b 往3缓冲区通道中发送
+2023-04-28 11:59:48.862	INFO	data_operation/get_data.go:24	5a8b38a3-0bc7-4ddd-aab4-0e0792844255 58040 江苏省 赣榆
+2023-04-28 11:59:48.862	INFO	data_operation/get_data.go:32	5a8b38a3-0bc7-4ddd-aab4-0e0792844255 往3缓冲区通道中发送
+2023-04-28 11:59:48.993	INFO	http_requests/http_get_worker.go:43	aad8c4cb-a5d8-4c43-b821-88509c0fdcd3 HttpGetWorker 往无缓冲通道发送
+2023-04-28 11:59:48.993	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从3缓冲区通道中获取
+2023-04-28 11:59:48.993	INFO	data_operation/save_data.go:150	SaveDataWorker 从无缓冲通道接收
+2023-04-28 11:59:48.993	INFO	data_operation/get_data.go:24	5fca5035-7bd0-45a1-87de-972a24b440bf 58241 江苏省 高邮
+2023-04-28 11:59:48.993	INFO	data_operation/get_data.go:32	5fca5035-7bd0-45a1-87de-972a24b440bf 往3缓冲区通道中发送
+2023-04-28 11:59:49.050	INFO	http_requests/http_get_worker.go:43	4ef59ab7-5830-4eb6-a280-9845639e2d99 HttpGetWorker 往无缓冲通道发送
+2023-04-28 11:59:49.157	INFO	data_operation/save_data.go:73	aad8c4cb-a5d8-4c43-b821-88509c0fdcd3 58238r_2023 插入实时数据 pk:87
+2023-04-28 11:59:49.495	INFO	data_operation/save_data.go:150	SaveDataWorker 从无缓冲通道接收
+2023-04-28 11:59:49.495	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从3缓冲区通道中获取
+2023-04-28 11:59:49.495	INFO	data_operation/get_data.go:24	b6748425-b943-4121-9d43-62f02330d6c4 58044 江苏省 连云港
+2023-04-28 11:59:49.495	INFO	data_operation/get_data.go:32	b6748425-b943-4121-9d43-62f02330d6c4 往3缓冲区通道中发送
+2023-04-28 11:59:49.541	INFO	http_requests/http_get_worker.go:43	15e04d85-9975-4ae6-9aa6-19f8eb5ccd0f HttpGetWorker 往无缓冲通道发送
+2023-04-28 11:59:49.685	INFO	data_operation/save_data.go:73	4ef59ab7-5830-4eb6-a280-9845639e2d99 58343r_2023 插入实时数据 pk:85
+2023-04-28 11:59:49.934	INFO	data_operation/save_data.go:150	SaveDataWorker 从无缓冲通道接收
+2023-04-28 11:59:49.934	INFO	data_operation/get_data.go:24	b3003d60-460c-4fb6-a25d-f1a78a62dc51 58259 江苏省 南通
+2023-04-28 11:59:49.934	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从3缓冲区通道中获取
+2023-04-28 11:59:49.935	INFO	data_operation/get_data.go:32	b3003d60-460c-4fb6-a25d-f1a78a62dc51 往3缓冲区通道中发送
+2023-04-28 11:59:49.984	INFO	http_requests/http_get_worker.go:43	94d4dc1d-9ee8-4e50-8c11-31166789398b HttpGetWorker 往无缓冲通道发送
+2023-04-28 11:59:50.023	INFO	data_operation/save_data.go:73	15e04d85-9975-4ae6-9aa6-19f8eb5ccd0f 58145r_2023 插入实时数据 pk:85
+2023-04-28 11:59:50.533	INFO	data_operation/save_data.go:150	SaveDataWorker 从无缓冲通道接收
+2023-04-28 11:59:50.533	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从3缓冲区通道中获取
+2023-04-28 11:59:50.533	INFO	data_operation/get_data.go:24	1cbb5b15-c2ef-465d-9f63-93bf1ec8643e 58349 江苏省 苏州
+2023-04-28 11:59:50.534	INFO	data_operation/get_data.go:32	1cbb5b15-c2ef-465d-9f63-93bf1ec8643e 往3缓冲区通道中发送
+2023-04-28 11:59:50.586	INFO	http_requests/http_get_worker.go:43	5a8b38a3-0bc7-4ddd-aab4-0e0792844255 HttpGetWorker 往无缓冲通道发送
+2023-04-28 11:59:50.692	INFO	data_operation/save_data.go:73	94d4dc1d-9ee8-4e50-8c11-31166789398b 58251r_2023 插入实时数据 pk:85
+2023-04-28 12:01:24.999	INFO	data_operation/get_data.go:24	a2308a9c-d81f-4b73-958c-ec1fe4410ab4 58238 江苏省 南京
+2023-04-28 12:01:25.005	INFO	data_operation/get_data.go:32	a2308a9c-d81f-4b73-958c-ec1fe4410ab4 往3缓冲区通道中发送
+2023-04-28 12:01:25.005	INFO	data_operation/get_data.go:24	9ca3eb2f-8d4f-4d03-8143-bf2d56260b9f 58343 江苏省 常州
+2023-04-28 12:01:25.005	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从3缓冲区通道中获取
+2023-04-28 12:01:25.005	INFO	data_operation/get_data.go:32	9ca3eb2f-8d4f-4d03-8143-bf2d56260b9f 往3缓冲区通道中发送
+2023-04-28 12:01:25.005	INFO	data_operation/get_data.go:24	4225480b-e0c9-4713-af14-d40dd8c786e9 58145 江苏省 楚州
+2023-04-28 12:01:25.006	INFO	data_operation/get_data.go:32	4225480b-e0c9-4713-af14-d40dd8c786e9 往3缓冲区通道中发送
+2023-04-28 12:01:25.088	INFO	http_requests/http_get_worker.go:43	a2308a9c-d81f-4b73-958c-ec1fe4410ab4 HttpGetWorker 往无缓冲通道发送
+2023-04-28 12:01:25.088	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从3缓冲区通道中获取
+2023-04-28 12:01:25.088	INFO	data_operation/save_data.go:150	SaveDataWorker 从无缓冲通道接收
+2023-04-28 12:01:25.089	INFO	data_operation/get_data.go:24	0a84a576-d850-4d8e-a050-d88668763929 58251 江苏省 东台
+2023-04-28 12:01:25.089	INFO	data_operation/get_data.go:32	0a84a576-d850-4d8e-a050-d88668763929 往3缓冲区通道中发送
+2023-04-28 12:01:25.178	INFO	http_requests/http_get_worker.go:43	9ca3eb2f-8d4f-4d03-8143-bf2d56260b9f HttpGetWorker 往无缓冲通道发送
+2023-04-28 12:01:25.209	INFO	data_operation/save_data.go:73	a2308a9c-d81f-4b73-958c-ec1fe4410ab4 58238r_2023 插入实时数据 pk:88
+2023-04-28 12:01:25.747	INFO	data_operation/save_data.go:150	SaveDataWorker 从无缓冲通道接收
+2023-04-28 12:01:25.747	INFO	data_operation/get_data.go:24	07f34a10-e693-4a6e-88c6-f3247f32289f 58040 江苏省 赣榆
+2023-04-28 12:01:25.747	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从3缓冲区通道中获取
+2023-04-28 12:01:25.748	INFO	data_operation/get_data.go:32	07f34a10-e693-4a6e-88c6-f3247f32289f 往3缓冲区通道中发送
+2023-04-28 12:01:25.790	INFO	http_requests/http_get_worker.go:43	4225480b-e0c9-4713-af14-d40dd8c786e9 HttpGetWorker 往无缓冲通道发送
+2023-04-28 12:01:25.883	INFO	data_operation/save_data.go:73	9ca3eb2f-8d4f-4d03-8143-bf2d56260b9f 58343r_2023 插入实时数据 pk:86
+2023-04-28 12:01:26.443	INFO	data_operation/save_data.go:150	SaveDataWorker 从无缓冲通道接收
+2023-04-28 12:01:26.443	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从3缓冲区通道中获取
+2023-04-28 12:01:26.443	INFO	data_operation/get_data.go:24	99eaa5b6-864f-4824-89cc-d133e6c9e15a 58241 江苏省 高邮
+2023-04-28 12:01:26.444	INFO	data_operation/get_data.go:32	99eaa5b6-864f-4824-89cc-d133e6c9e15a 往3缓冲区通道中发送
+2023-04-28 12:01:26.481	INFO	http_requests/http_get_worker.go:43	0a84a576-d850-4d8e-a050-d88668763929 HttpGetWorker 往无缓冲通道发送
+2023-04-28 12:01:26.552	INFO	data_operation/save_data.go:73	4225480b-e0c9-4713-af14-d40dd8c786e9 58145r_2023 插入实时数据 pk:86
+2023-04-28 12:04:45.702	INFO	data_operation/get_data.go:24	a6102570-fcc3-494f-8e9a-440288dca0c8 58238 江苏省 南京
+2023-04-28 12:04:45.707	INFO	data_operation/get_data.go:32	a6102570-fcc3-494f-8e9a-440288dca0c8 往无缓冲通道中发送
+2023-04-28 12:04:45.707	INFO	data_operation/get_data.go:24	7ba97cc8-8fb7-4440-8e58-220086d3b524 58343 江苏省 常州
+2023-04-28 12:04:45.707	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:04:45.708	INFO	data_operation/get_data.go:32	7ba97cc8-8fb7-4440-8e58-220086d3b524 往无缓冲通道中发送
+2023-04-28 12:04:46.894	INFO	http_requests/http_get_worker.go:43	a6102570-fcc3-494f-8e9a-440288dca0c8 HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:04:46.895	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:04:46.895	INFO	data_operation/save_data.go:150	SaveDataWorker 从100缓冲通道接收
+2023-04-28 12:04:46.895	INFO	data_operation/get_data.go:24	41b3e381-e1df-48c5-897f-7ee286b44169 58145 江苏省 楚州
+2023-04-28 12:04:46.895	INFO	data_operation/get_data.go:32	41b3e381-e1df-48c5-897f-7ee286b44169 往无缓冲通道中发送
+2023-04-28 12:04:46.967	INFO	http_requests/http_get_worker.go:43	7ba97cc8-8fb7-4440-8e58-220086d3b524 HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:04:46.968	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:04:46.968	INFO	data_operation/get_data.go:24	d4c12456-d4ac-4566-b657-51dba98652d1 58251 江苏省 东台
+2023-04-28 12:04:46.974	INFO	data_operation/get_data.go:32	d4c12456-d4ac-4566-b657-51dba98652d1 往无缓冲通道中发送
+2023-04-28 12:04:47.005	INFO	data_operation/save_data.go:73	a6102570-fcc3-494f-8e9a-440288dca0c8 58238r_2023 插入实时数据 pk:89
+2023-04-28 12:04:47.033	INFO	http_requests/http_get_worker.go:43	41b3e381-e1df-48c5-897f-7ee286b44169 HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:04:47.034	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:04:47.034	INFO	data_operation/get_data.go:24	1992c698-8e8e-4a2c-aa42-20f8c340124e 58040 江苏省 赣榆
+2023-04-28 12:04:47.034	INFO	data_operation/get_data.go:32	1992c698-8e8e-4a2c-aa42-20f8c340124e 往无缓冲通道中发送
+2023-04-28 12:04:47.093	INFO	http_requests/http_get_worker.go:43	d4c12456-d4ac-4566-b657-51dba98652d1 HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:04:47.093	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:04:47.093	INFO	data_operation/get_data.go:24	824316f4-c088-4d1e-9052-d0ef5f457074 58241 江苏省 高邮
+2023-04-28 12:04:47.093	INFO	data_operation/get_data.go:32	824316f4-c088-4d1e-9052-d0ef5f457074 往无缓冲通道中发送
+2023-04-28 12:04:47.162	INFO	http_requests/http_get_worker.go:43	1992c698-8e8e-4a2c-aa42-20f8c340124e HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:04:47.162	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:04:47.162	INFO	data_operation/get_data.go:24	34a2f359-2ab9-4cc9-8bc3-7877bcf2b3d3 58044 江苏省 连云港
+2023-04-28 12:04:47.162	INFO	data_operation/get_data.go:32	34a2f359-2ab9-4cc9-8bc3-7877bcf2b3d3 往无缓冲通道中发送
+2023-04-28 12:04:47.223	INFO	http_requests/http_get_worker.go:43	824316f4-c088-4d1e-9052-d0ef5f457074 HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:04:47.223	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:04:47.223	INFO	data_operation/get_data.go:24	b472ee71-dcab-44de-9721-486a1ec464c7 58259 江苏省 南通
+2023-04-28 12:04:47.224	INFO	data_operation/get_data.go:32	b472ee71-dcab-44de-9721-486a1ec464c7 往无缓冲通道中发送
+2023-04-28 12:04:47.259	INFO	http_requests/http_get_worker.go:43	34a2f359-2ab9-4cc9-8bc3-7877bcf2b3d3 HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:04:47.260	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:04:47.260	INFO	data_operation/get_data.go:24	0710a455-ff1d-4e0a-8607-44b88cb4a34a 58349 江苏省 苏州
+2023-04-28 12:04:47.260	INFO	data_operation/get_data.go:32	0710a455-ff1d-4e0a-8607-44b88cb4a34a 往无缓冲通道中发送
+2023-04-28 12:04:47.327	INFO	http_requests/http_get_worker.go:43	b472ee71-dcab-44de-9721-486a1ec464c7 HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:04:47.327	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:04:47.327	INFO	data_operation/get_data.go:24	c4bc1880-2450-4195-a8b8-ca65af3e93b7 58131 江苏省 宿迁
+2023-04-28 12:04:47.328	INFO	data_operation/get_data.go:32	c4bc1880-2450-4195-a8b8-ca65af3e93b7 往无缓冲通道中发送
+2023-04-28 12:04:47.376	INFO	http_requests/http_get_worker.go:43	0710a455-ff1d-4e0a-8607-44b88cb4a34a HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:04:47.376	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:04:47.376	INFO	data_operation/get_data.go:24	308e7f54-a31d-4d2a-8b67-cb6f6a501d79 58246 江苏省 泰州
+2023-04-28 12:04:47.377	INFO	data_operation/get_data.go:32	308e7f54-a31d-4d2a-8b67-cb6f6a501d79 往无缓冲通道中发送
+2023-04-28 12:04:47.460	INFO	http_requests/http_get_worker.go:43	c4bc1880-2450-4195-a8b8-ca65af3e93b7 HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:04:47.461	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:04:47.461	INFO	data_operation/get_data.go:24	e7a1b23b-e6d6-428f-b8e5-049543f40983 58354 江苏省 无锡
+2023-04-28 12:04:47.461	INFO	data_operation/get_data.go:32	e7a1b23b-e6d6-428f-b8e5-049543f40983 往无缓冲通道中发送
+2023-04-28 12:04:47.522	INFO	http_requests/http_get_worker.go:43	308e7f54-a31d-4d2a-8b67-cb6f6a501d79 HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:04:47.522	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:04:47.522	INFO	data_operation/get_data.go:24	2fd933f4-ecf7-45f2-93d9-a627598572fc 58027 江苏省 徐州
+2023-04-28 12:04:47.522	INFO	data_operation/get_data.go:32	2fd933f4-ecf7-45f2-93d9-a627598572fc 往无缓冲通道中发送
+2023-04-28 12:04:47.558	INFO	data_operation/save_data.go:150	SaveDataWorker 从100缓冲通道接收
+2023-04-28 12:04:47.572	INFO	http_requests/http_get_worker.go:43	e7a1b23b-e6d6-428f-b8e5-049543f40983 HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:04:47.573	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:04:47.574	INFO	data_operation/get_data.go:24	8a3dbc9c-fc1d-41e9-b0c0-97718791731c 58154 江苏省 盐城
+2023-04-28 12:04:47.574	INFO	data_operation/get_data.go:32	8a3dbc9c-fc1d-41e9-b0c0-97718791731c 往无缓冲通道中发送
+2023-04-28 12:06:47.110	INFO	data_operation/get_data.go:24	1c3ac084-65e4-4c0c-a201-76600f00f789 58238 江苏省 南京
+2023-04-28 12:06:47.117	INFO	data_operation/get_data.go:32	1c3ac084-65e4-4c0c-a201-76600f00f789 往无缓冲通道中发送
+2023-04-28 12:06:47.118	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:06:47.410	INFO	http_requests/http_get_worker.go:43	1c3ac084-65e4-4c0c-a201-76600f00f789 HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:06:47.411	INFO	data_operation/save_data.go:150	SaveDataWorker 从100缓冲通道接收
+2023-04-28 12:06:47.495	INFO	data_operation/save_data.go:73	1c3ac084-65e4-4c0c-a201-76600f00f789 58238r_2023 插入实时数据 pk:90
+2023-04-28 12:06:51.117	INFO	data_operation/get_data.go:24	191badbd-d5f2-4ae2-aacc-6d1f96b28540 58343 江苏省 常州
+2023-04-28 12:06:51.117	INFO	data_operation/get_data.go:32	191badbd-d5f2-4ae2-aacc-6d1f96b28540 往无缓冲通道中发送
+2023-04-28 12:06:51.117	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:06:51.246	INFO	http_requests/http_get_worker.go:43	191badbd-d5f2-4ae2-aacc-6d1f96b28540 HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:06:51.246	INFO	data_operation/save_data.go:150	SaveDataWorker 从100缓冲通道接收
+2023-04-28 12:06:51.391	INFO	data_operation/save_data.go:73	191badbd-d5f2-4ae2-aacc-6d1f96b28540 58343r_2023 插入实时数据 pk:88
+2023-04-28 12:06:55.117	INFO	data_operation/get_data.go:24	5ffec5f9-538b-432a-bc8a-0d31ff6644d5 58145 江苏省 楚州
+2023-04-28 12:06:55.117	INFO	data_operation/get_data.go:32	5ffec5f9-538b-432a-bc8a-0d31ff6644d5 往无缓冲通道中发送
+2023-04-28 12:06:55.117	INFO	http_requests/http_get_worker.go:13	HttpGetWorker 从无缓冲通道中获取
+2023-04-28 12:06:55.252	INFO	http_requests/http_get_worker.go:43	5ffec5f9-538b-432a-bc8a-0d31ff6644d5 HttpGetWorker 往100缓冲通道发送
+2023-04-28 12:06:55.252	INFO	data_operation/save_data.go:150	SaveDataWorker 从100缓冲通道接收
+2023-04-28 12:06:55.373	INFO	data_operation/save_data.go:73	5ffec5f9-538b-432a-bc8a-0d31ff6644d5 58145r_2023 插入实时数据 pk:87

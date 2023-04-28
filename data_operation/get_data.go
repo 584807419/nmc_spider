@@ -4,7 +4,9 @@ import (
 	"nmc_spider/db"
 	"nmc_spider/http_requests"
 	"nmc_spider/log_manage"
+	"nmc_spider/message_queue"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,18 +15,28 @@ import (
 var logger = log_manage.FSLogger
 var HttpGet = http_requests.HttpGet
 
-func GetData() {
-	location := db.GetAllLocation()
-	for _, value := range location {
-		u4 := uuid.New()
-		uuidv4 := u4.String()
-		logger.Infof("%v %v %v %v", uuidv4, value.Stationid, value.Province, value.City)
-		time_stamp := strconv.FormatInt(time.Now().UnixMilli(), 10)
-		url := "http://www.nmc.cn/rest/weather?stationid=" + value.Stationid + "&_=" + time_stamp
-		resp_data := HttpGet(url, uuidv4)
-		SaveData(resp_data, uuidv4, value.Stationid)
-		time.Sleep(4 * time.Second)
+func GetData(wg *sync.WaitGroup) {
+	for {
+		location := db.GetAllLocation()
+		for _, value := range location {
+			u4 := uuid.New()
+			uuidv4 := u4.String()
+			logger.Infof("%v %v %v %v", uuidv4, value.Stationid, value.Province, value.City)
+			time_stamp := strconv.FormatInt(time.Now().UnixMilli(), 10)
+			urlHashMap := map[string]string{
+				"url":       "http://www.nmc.cn/rest/weather?stationid=" + value.Stationid + "&_=" + time_stamp,
+				"uuid":      uuidv4,
+				"stationid": value.Stationid,
+			}
+			// 无缓冲 阻塞
+			logger.Infof("%v %v", uuidv4, "往无缓冲通道中发送")
+			message_queue.TempUrlChan <- urlHashMap
+			// resp_data := HttpGet(url, uuidv4)
+			// SaveData(resp_data, uuidv4, value.Stationid)
+			time.Sleep(3 * time.Second)
+		}
 	}
+	// wg.Done()
 }
 
 func GetProvinceData() {
