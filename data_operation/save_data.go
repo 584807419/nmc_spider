@@ -146,21 +146,25 @@ func SaveData(resp []byte, uuid, stationid string) {
 
 func SaveDataWorker(wg *sync.WaitGroup) {
 	for {
-		respData, ok := <-message_queue.TempRespDataChan
-		logger.Infof("SaveDataWorker %v", "从100缓冲通道接收")
-		resp_body := respData["resp_body"].([]byte)
-		uuid := respData["uuid"].(string)
-		stationid := respData["stationid"].(string)
-		if ok {
-			var dataAttr map[string]interface{}
-			err := json.Unmarshal(resp_body, &dataAttr)
-			if err != nil {
-				logger.Errorf("%v json解析出错 %v, 原数据:", uuid, err, resp_body)
-			} else {
-				respData := dataAttr["data"].(map[string]interface{})
-				saveRtableData(respData, uuid, stationid)
-				savetableData(respData, uuid, stationid)
+		select {
+		case respData, ok := <-message_queue.TempRespDataChan:
+			logger.Infof("SaveDataWorker %v", "从100缓冲通道接收")
+			resp_body := respData["resp_body"].([]byte)
+			uuid := respData["uuid"].(string)
+			stationid := respData["stationid"].(string)
+			if ok {
+				var dataAttr map[string]interface{}
+				err := json.Unmarshal(resp_body, &dataAttr)
+				if err != nil {
+					logger.Errorf("%v json解析出错 %v, 原数据:", uuid, err, resp_body)
+				} else {
+					respData := dataAttr["data"].(map[string]interface{})
+					saveRtableData(respData, uuid, stationid)
+					savetableData(respData, uuid, stationid)
+				}
 			}
+			// default:
+			// logger.Infof("从100缓冲通道 没拿到消息")
 		}
 	}
 	// wg.Done()
