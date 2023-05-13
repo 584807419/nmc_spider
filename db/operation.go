@@ -54,7 +54,7 @@ func GetData(sqlStr, uuid string) (EverydayData, error) {
 	err := DB.Get(&everyday_data, sqlStr)
 	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
-			logger.Errorf("%v %v %v", uuid, "没查到数据", sqlStr)
+			logger.Infof("%v %v %v", uuid, "没查到数据", sqlStr)
 		} else {
 			logger.Errorf("%v", uuid, err.Error())
 		}
