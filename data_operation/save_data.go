@@ -158,9 +158,15 @@ func SaveDataWorker(wg *sync.WaitGroup) {
 				if err != nil {
 					logger.Errorf("%v json解析出错 %v, 原数据:", uuid, err, resp_body)
 				} else {
-					respData := dataAttr["data"].(map[string]interface{})
-					saveRtableData(respData, uuid, stationid)
-					savetableData(respData, uuid, stationid)
+					//  解决 interface conversion: interface {} is nil, not map[string]interface {}
+					respDataPre, ok := dataAttr["data"]
+					if ok {
+						respData = respDataPre.(map[string]interface{})
+						saveRtableData(respData, uuid, stationid)
+						savetableData(respData, uuid, stationid)
+					} else {
+						logger.Errorf("uuid:%v 无数据 resp_body:%v", uuid, resp_body)
+					}
 				}
 			}
 			// default:

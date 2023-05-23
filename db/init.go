@@ -11,9 +11,7 @@ var DB = initDB() // 常量
 
 // 建立连接池
 func initDB() (DB *sqlx.DB) {
-	// dsn := "root:Zk199245*99@tcp(192.168.1.16:3306)/www_nmc_cn?charset=utf8mb4&parseTime=False&loc=Local&tls=false"
-	// dsn := "root:Zk199245*99@tcp(pythonic.pub:3306)/www_nmc_cn?charset=utf8mb4&parseTime=False&loc=Local&tls=false"
-	dsn := "root:Zk199245*99@tcp([2409:8a02:4829:3f00:80bd:8e03:2be8:f733]:3306)/www_nmc_cn?charset=utf8mb4&parseTime=False&loc=Local&tls=false"
+	dsn := "xxxxx:xxxxxxx@tcp([2409:8a02:4829:3f00:80bd:8e03:2be8:f733]:3306)/www_nmc_cn?charset=utf8mb4&parseTime=False&loc=Local&tls=false"
 	// 也可以使用MustConnect连接不成功就panic
 	DB, err := sqlx.Connect("mysql", dsn)
 	if err != nil {
