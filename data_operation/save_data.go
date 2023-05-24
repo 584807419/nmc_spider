@@ -160,7 +160,7 @@ func SaveDataWorker(wg *sync.WaitGroup) {
 				} else {
 					//  解决 interface conversion: interface {} is nil, not map[string]interface {}
 					respDataPre, ok := dataAttr["data"]
-					if ok {
+					if ok && (respDataPre != nil) {
 						respData = respDataPre.(map[string]interface{})
 						saveRtableData(respData, uuid, stationid)
 						savetableData(respData, uuid, stationid)
