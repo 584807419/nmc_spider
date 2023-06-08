@@ -63,6 +63,20 @@ func GetData(sqlStr, uuid string) (EverydayData, error) {
 	return everyday_data, err
 }
 
+func GetRData(sqlStr, uuid string) (EveryTimeData, error) {
+	var everyr_data EveryTimeData
+	err := DB.Get(&everyr_data, sqlStr)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			logger.Infof("%v %v %v", uuid, "没查到数据", sqlStr)
+		} else {
+			logger.Errorf("%v", uuid, err.Error())
+		}
+
+	}
+	return everyr_data, err
+}
+
 func GetMultiData(sqlStr, uuid string) Location {
 	var location_data Location
 	err := DB.Select(&location_data, sqlStr)

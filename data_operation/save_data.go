@@ -4,13 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"nmc_spider/db"
-	"nmc_spider/message_queue"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
-
-	"github.com/antchfx/htmlquery"
 )
 
 func saveRtableData(respData map[string]interface{}, uuid, stationid string) {
@@ -26,30 +22,75 @@ func saveRtableData(respData map[string]interface{}, uuid, stationid string) {
 		yearStr := strconv.FormatInt(int64(time.Now().Year()), 10)
 		rtableName := stationid + "r" + "_" + yearStr
 
-		temperaturefloat := realWeatherData["temperature"].(float64)
-		temperature := fmt.Sprintf("%.1f", temperaturefloat)
-		humidity := fmt.Sprintf("%.1f", realWeatherData["humidity"].(float64))
-		rain := fmt.Sprintf("%.1f", realWeatherData["rain"].(float64))
-		icomfort := fmt.Sprintf("%.0f", realWeatherData["icomfort"].(float64))
+		//  type-switch 来判断某个 interface 变量中实际存储的变量类型
+		var temperature any
+		switch realWeatherData["temperature"].(type) {
+		case float64:
+			temperature = fmt.Sprintf("%.1f", realWeatherData["temperature"].(float64))
+		case string:
+			temperature = realWeatherData["temperature"].(string)
+		}
+
+		// 湿度
+		var humidity any
+		switch realWeatherData["humidity"].(type) {
+		case float64:
+			humidity = fmt.Sprintf("%.1f", realWeatherData["humidity"].(float64))
+		case string:
+			humidity = realWeatherData["humidity"].(string)
+		}
+
+		var rain any
+		switch realWeatherData["rain"].(type) {
+		case float64:
+			rain = fmt.Sprintf("%.1f", realWeatherData["rain"].(float64))
+		case string:
+			rain = realWeatherData["rain"].(string)
+		}
+		realWeatherDataIcomfortValue, ok := realWeatherData["icomfort"]
+		var icomfort string
+		if ok {
+			icomfort = fmt.Sprintf("%.0f", realWeatherDataIcomfortValue.(float64))
+		}
+
 		info := realWeatherData["info"].(string)
-		feelst := fmt.Sprintf("%.1f", realWeatherData["feelst"].(float64))
+		var feelst string
+		realWeatherDataFeelstValue, ok := realWeatherData["feelst"]
+		if ok {
+			feelst = fmt.Sprintf("%.1f", realWeatherDataFeelstValue.(float64))
+		}
 
 		realWindData := realData["wind"].(map[string]interface{})
 		wind_direct := realWindData["direct"].(string)
 		if wind_direct == "9999" {
 			wind_direct = "无"
 		}
-		wind_power := realWindData["power"].(string)
-		wind_speed := fmt.Sprintf("%.1f", realWindData["speed"].(float64))
-
-		realWarnData := realData["warn"].(map[string]interface{})
-		signaltype := realWarnData["signaltype"].(string)
-		signallevel := realWarnData["signallevel"].(string)
-		issuecontent := realWarnData["issuecontent"].(string)
-		warn_str := signaltype + ":" + signallevel + "\n" + issuecontent
-		if signaltype == "9999" {
-			warn_str = ""
+		wind_power := ""
+		windPowerValue, ok := realWindData["power"]
+		if ok {
+			wind_power = windPowerValue.(string)
 		}
+		var wind_speed any
+		switch realWindData["speed"].(type) {
+		case float64:
+			wind_speed = fmt.Sprintf("%.1f", realWindData["speed"].(float64))
+		case string:
+			wind_speed = realWindData["speed"].(string)
+		}
+
+		warn_str := ""
+		realDataValue, ok := realData["warn"]
+		if ok {
+			realWarnData := realDataValue.(map[string]interface{})
+			signaltype := realWarnData["signaltype"].(string)
+			signallevel := realWarnData["signallevel"].(string)
+			issuecontent := realWarnData["issuecontent"].(string)
+			warn_str = signaltype + ":" + signallevel + "\n" + issuecontent
+			if signaltype == "9999" {
+				warn_str = ""
+			}
+		}
+
 		aqi := ""
 		aq := ""
 		airData, ok := respData["air"].(map[string]interface{})
@@ -71,8 +112,27 @@ func saveRtableData(respData map[string]interface{}, uuid, stationid string) {
 
 		rtableNameSqlStr := fmt.Sprintf("insert into %v (date, time, temperature,humidity,rain,icomfort,info,feelst,wind_direct,wind_power,wind_speed,warn,aqi,aq) values ('%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v')", rtableName, temp_t_date, temp_t_time, temperature, humidity, rain, icomfort, info, feelst, wind_direct, wind_power, wind_speed, warn_str, aqi, aq)
 		if !strings.Contains(rtableNameSqlStr, "9999") {
-			_pk := db.InsertRow(rtableNameSqlStr, uuid)
-			logger.Infof("%v %v %v%v", uuid, rtableName, "插入实时数据 pk:", _pk)
+			getOneData := fmt.Sprintf("select * from %v where date = '%v' and time = '%v' order by id desc limit 1", rtableName, temp_t_date, temp_t_time)
+			everyr_data, err := db.GetRData(getOneData, uuid)
+			if err != nil {
+				_pk := db.InsertRow(rtableNameSqlStr, uuid)
+				logger.Infof("%v %v %v%v", uuid, rtableName, "插入实时数据 pk:", _pk)
+			} else {
+				if everyr_data.Temperature == temperature {
+					logger.Infof("%v %v %v %v", uuid, everyr_data.Date, everyr_data.Time, "无新数据")
+				} else {
+					logger.Infof("%v %v %v %v", uuid, everyr_data.Date, everyr_data.Time, "有新数据")
+					// updatesql := fmt.Sprintf("UPDATE %v SET `date` = '%v', `day_info` = '%v', `day_temperature` = '%v', `day_direct` = '%v', `day_power` = '%v', `night_info` = '%v', `night_temperature` = '%v', `night_direct` = '%v', `night_power` = '%v' WHERE `id` = %v;", tableName, temp_t_date, dayInfo_weather_info, dayInfo_weather_temperature, dayInfo_wind_direct, dayInfo_wind_power, nightInfo_weather_info, nightInfo_weather_temperature, nightInfo_wind_direct, nightInfo_wind_power, everyday_data.Id)
+					updatesql := fmt.Sprintf("update %v set date='%v', time='%v', temperature='%v',humidity='%v',rain='%v',icomfort='%v',info='%v',feelst='%v',wind_direct='%v',wind_power='%v',wind_speed='%v',warn='%v',aqi='%v',aq='%v' where id = '%v'", rtableName, temp_t_date, temp_t_time, temperature, humidity, rain, icomfort, info, feelst, wind_direct, wind_power, wind_speed, warn_str, aqi, aq, everyr_data.Id)
+					rowCount, err := db.ExecSql(updatesql, uuid)
+					if err != nil {
+						logger.Errorf("%v %v %v %v", uuid, "更新失败", updatesql, err)
+					} else {
+						logger.Infof("%v %v %v %v", uuid, rtableName, "更新成功,row:", rowCount)
+					}
+				}
+			}
+
 		} else {
 			logger.Debugf("%v-%v", uuid, "没插入-发现9999")
 		}
@@ -132,93 +192,6 @@ func savetableData(respData map[string]interface{}, uuid, stationid string) {
 		}
 	}
 }
-
-func SaveData(resp []byte, uuid, stationid string) {
-	var dataAttr map[string]interface{}
-	err := json.Unmarshal(resp, &dataAttr)
-	if err != nil {
-		logger.Errorf("%v json解析出错 %v, 原数据:", uuid, err, resp)
-	} else {
-		respData := dataAttr["data"].(map[string]interface{})
-		saveRtableData(respData, uuid, stationid)
-		savetableData(respData, uuid, stationid)
-	}
-
-}
-
-func SaveDataWorker(wg *sync.WaitGroup) {
-	for {
-		select {
-		case respData, ok := <-message_queue.TempRespDataChan:
-			if ok {
-				logger.Infof("SaveDataWorker %v", "从100缓冲通道接收")
-				var dataAttr map[string]interface{}
-				uuid := respData["uuid"].(string)
-				stationid := respData["stationid"].(string)
-				resp_body, okjson := respData["resp_body"].([]byte)
-				if okjson {
-					err := json.Unmarshal(resp_body, &dataAttr)
-					if err != nil {
-						logger.Errorf("%v json解析出错 %v, 原数据:", uuid, err, resp_body)
-					} else {
-						//  解决 interface conversion: interface {} is nil, not map[string]interface {}
-						respDataPre, ok := dataAttr["data"]
-						if ok && (respDataPre != nil) {
-							respData = respDataPre.(map[string]interface{})
-							saveRtableData(respData, uuid, stationid)
-							savetableData(respData, uuid, stationid)
-						} else {
-							logger.Errorf("uuid:%v 无数据 resp_body:%v", uuid, resp_body)
-						}
-					}
-				}
-				resp_html_body, okhtml := respData["resp_html_body"].([]byte)
-				if okhtml {
-					// var buf = bytes.NewBuffer([]byte{})
-					html_tree_root, err := htmlquery.Parse(strings.NewReader(string(resp_html_body)))
-					// node, err := html.Parse(strings.NewReader(string(resp_html_body)))
-					// html.Render(buf, node)
-					// print(buf.String())
-					// rule_json_ins.Text = buf.String()
-					// nodenew, err = xmlpath.Parse(strings.NewReader(rule_json_ins.Text))
-					// print(nodenew)
-
-					// if err != nil {
-					// 	print(err)
-					// }
-					if err == nil {
-						all_node_slice := htmlquery.Find(html_tree_root, "//div[@id=\"day0\"]/div")
-						for _, item := range all_node_slice {
-							time_node := htmlquery.InnerText(htmlquery.Find(item, "//div/div[1]")[0])
-							rain_node := htmlquery.InnerText(htmlquery.Find(item, "//div/div[3]")[0])
-							temperature_node := htmlquery.InnerText(htmlquery.Find(item, "//div/div[4]")[0])
-							wind_speed_node := htmlquery.InnerText(htmlquery.Find(item, "//div/div[5]")[0])
-							wind_direct_node := htmlquery.InnerText(htmlquery.Find(item, "//div/div[6]")[0])
-							humidity_node := htmlquery.InnerText(htmlquery.Find(item, "//div/div[8]")[0])
-
-							respData := make(map[string]interface{})
-							realmap := make(map[string]interface{})
-							realmap["publish_time"] = time.Now().Format("2006-01-02") + time_node
-							realmap["temperature"] = strings.Replace(temperature_node, "℃", "", 1)
-							realmap["rain"] = strings.Replace(rain_node, "-", "0.0", 1)
-							realmap["direct"] = wind_direct_node
-							realmap["speed"] = strings.Replace(wind_speed_node, "m/s", "", 1)
-							realmap["humidity"] = strings.Replace(humidity_node, "%", "", 1)
-							respData["real"] = realmap
-							saveRtableData(respData, uuid, stationid)
-						}
-					}
-
-				}
-			}
-
-		}
-		// default:
-		// logger.Infof("从100缓冲通道 没拿到消息")
-	}
-}
-
-// wg.Done()
 
 func SaveProvinceCityData(resp []byte, uuid string) {
 	logger.Infof("%v %v", uuid, "解析市区县信息")
