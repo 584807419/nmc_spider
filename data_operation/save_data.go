@@ -144,51 +144,58 @@ func savetableData(respData map[string]interface{}, uuid, stationid string) {
 	// logger.Debugf("%v-%v", uuid, "预报")
 	yearStr := strconv.FormatInt(int64(time.Now().Year()), 10)
 	tableName := stationid + "_" + yearStr
-	predictData := respData["predict"].(map[string]interface{})
-	detailSlice := predictData["detail"].([]interface{})
-	for _, HMapItem := range detailSlice {
-		HMapDict := HMapItem.(map[string]interface{})
-		dayInfo := HMapDict["day"].(map[string]interface{})
-		temp_t_date := HMapDict["date"].(string)
-		dayInfo_weather := dayInfo["weather"].(map[string]interface{})
-		dayInfo_weather_info := dayInfo_weather["info"]
-		dayInfo_weather_temperature := dayInfo_weather["temperature"]
-		dayInfo_wind := dayInfo["wind"].(map[string]interface{})
-		dayInfo_wind_direct := dayInfo_wind["direct"]
-		dayInfo_wind_power := dayInfo_wind["power"]
+	respDataValue := respData["predict"]
+	switch respDataValue.(type) {
+	case map[string]interface{}:
+		predictData := respDataValue.(map[string]interface{})
+		detailSlice := predictData["detail"].([]interface{})
+		for _, HMapItem := range detailSlice {
+			HMapDict := HMapItem.(map[string]interface{})
+			dayInfo := HMapDict["day"].(map[string]interface{})
+			temp_t_date := HMapDict["date"].(string)
+			dayInfo_weather := dayInfo["weather"].(map[string]interface{})
+			dayInfo_weather_info := dayInfo_weather["info"]
+			dayInfo_weather_temperature := dayInfo_weather["temperature"]
+			dayInfo_wind := dayInfo["wind"].(map[string]interface{})
+			dayInfo_wind_direct := dayInfo_wind["direct"]
+			dayInfo_wind_power := dayInfo_wind["power"]
 
-		nightInfo := HMapDict["night"].(map[string]interface{})
-		nightInfo_weather := nightInfo["weather"].(map[string]interface{})
-		nightInfo_weather_info := nightInfo_weather["info"]
-		nightInfo_weather_temperature := nightInfo_weather["temperature"]
-		nightInfo_wind := nightInfo["wind"].(map[string]interface{})
-		nightInfo_wind_direct := nightInfo_wind["direct"]
-		nightInfo_wind_power := nightInfo_wind["power"]
+			nightInfo := HMapDict["night"].(map[string]interface{})
+			nightInfo_weather := nightInfo["weather"].(map[string]interface{})
+			nightInfo_weather_info := nightInfo_weather["info"]
+			nightInfo_weather_temperature := nightInfo_weather["temperature"]
+			nightInfo_wind := nightInfo["wind"].(map[string]interface{})
+			nightInfo_wind_direct := nightInfo_wind["direct"]
+			nightInfo_wind_power := nightInfo_wind["power"]
 
-		tableNameSqlStr := fmt.Sprintf("insert into %v (date, day_info,day_temperature,day_direct,day_power,night_info,night_temperature,night_direct,night_power) values ('%v','%v','%v','%v','%v','%v','%v','%v','%v')", tableName, temp_t_date, dayInfo_weather_info, dayInfo_weather_temperature, dayInfo_wind_direct, dayInfo_wind_power, nightInfo_weather_info, nightInfo_weather_temperature, nightInfo_wind_direct, nightInfo_wind_power)
-		if !strings.Contains(tableNameSqlStr, "9999") {
-			getOneData := fmt.Sprintf("select * from %v where date = '%v' order by id desc limit 1", tableName, temp_t_date)
-			everyday_data, err := db.GetData(getOneData, uuid)
-			if err != nil {
-				_pk := db.InsertRow(tableNameSqlStr, uuid)
-				logger.Infof("%v %v-%v%v", uuid, tableName, "插入成功 pk:", _pk)
-			} else {
-				if (everyday_data.Day_info == dayInfo_weather_info) && (everyday_data.Day_temperature == dayInfo_weather_temperature) && (everyday_data.Day_direct == dayInfo_wind_direct) && (everyday_data.Day_power == dayInfo_wind_power) && (everyday_data.Night_info == nightInfo_weather_info) && (everyday_data.Night_temperature == nightInfo_weather_temperature) && (everyday_data.Night_direct == nightInfo_wind_direct) && (everyday_data.Night_power == nightInfo_wind_power) {
-					// logger.Debugf("%v %v %v", uuid, everyday_data.Date, "无新数据")
-				} else if (everyday_data.Day_info != dayInfo_weather_info) || (everyday_data.Day_temperature != dayInfo_weather_temperature) || (everyday_data.Day_direct != dayInfo_wind_direct) || (everyday_data.Day_power != dayInfo_wind_power) || (everyday_data.Night_info != nightInfo_weather_info) || (everyday_data.Night_temperature != nightInfo_weather_temperature) || (everyday_data.Night_direct != nightInfo_wind_direct) || (everyday_data.Night_power != nightInfo_wind_power) {
-					// logger.Debugf("%v %v %v", uuid, everyday_data.Date, "有新数据")
-					updatesql := fmt.Sprintf("UPDATE %v SET `date` = '%v', `day_info` = '%v', `day_temperature` = '%v', `day_direct` = '%v', `day_power` = '%v', `night_info` = '%v', `night_temperature` = '%v', `night_direct` = '%v', `night_power` = '%v' WHERE `id` = %v;", tableName, temp_t_date, dayInfo_weather_info, dayInfo_weather_temperature, dayInfo_wind_direct, dayInfo_wind_power, nightInfo_weather_info, nightInfo_weather_temperature, nightInfo_wind_direct, nightInfo_wind_power, everyday_data.Id)
-					rowCount, err := db.ExecSql(updatesql, uuid)
-					if err != nil {
-						logger.Errorf("%v %v %v %v", uuid, "更新失败", updatesql, err)
-					} else {
-						logger.Infof("%v %v %v %v", uuid, tableName, "更新成功,row:", rowCount)
+			tableNameSqlStr := fmt.Sprintf("insert into %v (date, day_info,day_temperature,day_direct,day_power,night_info,night_temperature,night_direct,night_power) values ('%v','%v','%v','%v','%v','%v','%v','%v','%v')", tableName, temp_t_date, dayInfo_weather_info, dayInfo_weather_temperature, dayInfo_wind_direct, dayInfo_wind_power, nightInfo_weather_info, nightInfo_weather_temperature, nightInfo_wind_direct, nightInfo_wind_power)
+			if !strings.Contains(tableNameSqlStr, "9999") {
+				getOneData := fmt.Sprintf("select * from %v where date = '%v' order by id desc limit 1", tableName, temp_t_date)
+				everyday_data, err := db.GetData(getOneData, uuid)
+				if err != nil {
+					_pk := db.InsertRow(tableNameSqlStr, uuid)
+					logger.Infof("%v %v-%v%v", uuid, tableName, "插入成功 pk:", _pk)
+				} else {
+					if (everyday_data.Day_info == dayInfo_weather_info) && (everyday_data.Day_temperature == dayInfo_weather_temperature) && (everyday_data.Day_direct == dayInfo_wind_direct) && (everyday_data.Day_power == dayInfo_wind_power) && (everyday_data.Night_info == nightInfo_weather_info) && (everyday_data.Night_temperature == nightInfo_weather_temperature) && (everyday_data.Night_direct == nightInfo_wind_direct) && (everyday_data.Night_power == nightInfo_wind_power) {
+						// logger.Debugf("%v %v %v", uuid, everyday_data.Date, "无新数据")
+					} else if (everyday_data.Day_info != dayInfo_weather_info) || (everyday_data.Day_temperature != dayInfo_weather_temperature) || (everyday_data.Day_direct != dayInfo_wind_direct) || (everyday_data.Day_power != dayInfo_wind_power) || (everyday_data.Night_info != nightInfo_weather_info) || (everyday_data.Night_temperature != nightInfo_weather_temperature) || (everyday_data.Night_direct != nightInfo_wind_direct) || (everyday_data.Night_power != nightInfo_wind_power) {
+						// logger.Debugf("%v %v %v", uuid, everyday_data.Date, "有新数据")
+						updatesql := fmt.Sprintf("UPDATE %v SET `date` = '%v', `day_info` = '%v', `day_temperature` = '%v', `day_direct` = '%v', `day_power` = '%v', `night_info` = '%v', `night_temperature` = '%v', `night_direct` = '%v', `night_power` = '%v' WHERE `id` = %v;", tableName, temp_t_date, dayInfo_weather_info, dayInfo_weather_temperature, dayInfo_wind_direct, dayInfo_wind_power, nightInfo_weather_info, nightInfo_weather_temperature, nightInfo_wind_direct, nightInfo_wind_power, everyday_data.Id)
+						rowCount, err := db.ExecSql(updatesql, uuid)
+						if err != nil {
+							logger.Errorf("%v %v %v %v", uuid, "更新失败", updatesql, err)
+						} else {
+							logger.Infof("%v %v %v %v", uuid, tableName, "更新成功,row:", rowCount)
+						}
 					}
 				}
-			}
 
+			}
 		}
+	default:
+		logger.Errorf("%v %v %v %v", uuid, stationid, respDataValue, "没数据----ERROR----")
 	}
+
 }
 
 func SaveProvinceCityData(resp []byte, uuid string) {
