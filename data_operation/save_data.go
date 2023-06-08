@@ -9,6 +9,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/antchfx/htmlquery"
 )
 
 func saveRtableData(respData map[string]interface{}, uuid, stationid string) {
@@ -148,33 +150,75 @@ func SaveDataWorker(wg *sync.WaitGroup) {
 	for {
 		select {
 		case respData, ok := <-message_queue.TempRespDataChan:
-			logger.Infof("SaveDataWorker %v", "从100缓冲通道接收")
-			resp_body := respData["resp_body"].([]byte)
-			uuid := respData["uuid"].(string)
-			stationid := respData["stationid"].(string)
 			if ok {
+				logger.Infof("SaveDataWorker %v", "从100缓冲通道接收")
 				var dataAttr map[string]interface{}
-				err := json.Unmarshal(resp_body, &dataAttr)
-				if err != nil {
-					logger.Errorf("%v json解析出错 %v, 原数据:", uuid, err, resp_body)
-				} else {
-					//  解决 interface conversion: interface {} is nil, not map[string]interface {}
-					respDataPre, ok := dataAttr["data"]
-					if ok && (respDataPre != nil) {
-						respData = respDataPre.(map[string]interface{})
-						saveRtableData(respData, uuid, stationid)
-						savetableData(respData, uuid, stationid)
+				uuid := respData["uuid"].(string)
+				stationid := respData["stationid"].(string)
+				resp_body, okjson := respData["resp_body"].([]byte)
+				if okjson {
+					err := json.Unmarshal(resp_body, &dataAttr)
+					if err != nil {
+						logger.Errorf("%v json解析出错 %v, 原数据:", uuid, err, resp_body)
 					} else {
-						logger.Errorf("uuid:%v 无数据 resp_body:%v", uuid, resp_body)
+						//  解决 interface conversion: interface {} is nil, not map[string]interface {}
+						respDataPre, ok := dataAttr["data"]
+						if ok && (respDataPre != nil) {
+							respData = respDataPre.(map[string]interface{})
+							saveRtableData(respData, uuid, stationid)
+							savetableData(respData, uuid, stationid)
+						} else {
+							logger.Errorf("uuid:%v 无数据 resp_body:%v", uuid, resp_body)
+						}
 					}
 				}
+				resp_html_body, okhtml := respData["resp_html_body"].([]byte)
+				if okhtml {
+					// var buf = bytes.NewBuffer([]byte{})
+					html_tree_root, err := htmlquery.Parse(strings.NewReader(string(resp_html_body)))
+					// node, err := html.Parse(strings.NewReader(string(resp_html_body)))
+					// html.Render(buf, node)
+					// print(buf.String())
+					// rule_json_ins.Text = buf.String()
+					// nodenew, err = xmlpath.Parse(strings.NewReader(rule_json_ins.Text))
+					// print(nodenew)
+
+					// if err != nil {
+					// 	print(err)
+					// }
+					if err == nil {
+						all_node_slice := htmlquery.Find(html_tree_root, "//div[@id=\"day0\"]/div")
+						for _, item := range all_node_slice {
+							time_node := htmlquery.InnerText(htmlquery.Find(item, "//div/div[1]")[0])
+							rain_node := htmlquery.InnerText(htmlquery.Find(item, "//div/div[3]")[0])
+							temperature_node := htmlquery.InnerText(htmlquery.Find(item, "//div/div[4]")[0])
+							wind_speed_node := htmlquery.InnerText(htmlquery.Find(item, "//div/div[5]")[0])
+							wind_direct_node := htmlquery.InnerText(htmlquery.Find(item, "//div/div[6]")[0])
+							humidity_node := htmlquery.InnerText(htmlquery.Find(item, "//div/div[8]")[0])
+
+							respData := make(map[string]interface{})
+							realmap := make(map[string]interface{})
+							realmap["publish_time"] = time.Now().Format("2006-01-02") + time_node
+							realmap["temperature"] = strings.Replace(temperature_node, "℃", "", 1)
+							realmap["rain"] = strings.Replace(rain_node, "-", "0.0", 1)
+							realmap["direct"] = wind_direct_node
+							realmap["speed"] = strings.Replace(wind_speed_node, "m/s", "", 1)
+							realmap["humidity"] = strings.Replace(humidity_node, "%", "", 1)
+							respData["real"] = realmap
+							saveRtableData(respData, uuid, stationid)
+						}
+					}
+
+				}
 			}
-			// default:
-			// logger.Infof("从100缓冲通道 没拿到消息")
+
 		}
+		// default:
+		// logger.Infof("从100缓冲通道 没拿到消息")
 	}
-	// wg.Done()
 }
+
+// wg.Done()
 
 func SaveProvinceCityData(resp []byte, uuid string) {
 	logger.Infof("%v %v", uuid, "解析市区县信息")
@@ -193,6 +237,7 @@ func saveLocationDataAndTable(hash_map_dict map[string]interface{}, uuid string)
 	station_id := hash_map_dict["code"].(string)
 	province := hash_map_dict["province"].(string)
 	city := hash_map_dict["city"].(string)
+	pcurl := hash_map_dict["url"].(string)
 	logger.Debugf("%v %v %v %v", uuid, station_id, province, city)
 
 	get_location_sql := fmt.Sprintf("select * from location where stationid = '%v' order by id desc limit 1", station_id)
@@ -200,7 +245,7 @@ func saveLocationDataAndTable(hash_map_dict map[string]interface{}, uuid string)
 	if (location_data.Province == province) && (location_data.City == city) {
 		logger.Debugf("%v-%v", uuid, "省市已存在")
 	} else {
-		insert_location_str := fmt.Sprintf("INSERT INTO location (stationid,country,province,city,valid) VALUES ('%v','中国', '%v', '%v', '%v');", station_id, province, city, 1)
+		insert_location_str := fmt.Sprintf("INSERT INTO location (stationid,country,province,city,url,valid) VALUES ('%v','中国', '%v', '%v', '%v', '%v');", station_id, province, city, pcurl, 1)
 		_pk := db.InsertRow(insert_location_str, uuid)
 		logger.Infof("%v %v-%v%v", uuid, "location", "insert success,pk:", _pk)
 	}

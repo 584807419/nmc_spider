@@ -6,6 +6,7 @@ type Location struct {
 	Country   string
 	Province  string
 	City      string
+	Url      string
 	Valid     int
 }
 

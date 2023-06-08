@@ -9,7 +9,7 @@ import (
 func main() {
 	// data_operation.GetProvinceData()
 	var wg sync.WaitGroup
-	wg.Add(3)
+	wg.Add(4)
 	go data_operation.GetData(&wg)
 	go http_requests.HttpGetWorker(&wg)
 	go data_operation.SaveDataWorker(&wg)
