@@ -12,6 +12,6 @@ func main() {
 	wg.Add(4)
 	go data_operation.GetData(&wg)
 	go http_requests.HttpGetWorker(&wg)
-	go data_operation.SaveDataWorker(&wg)
+	go data_operation.ParsingDataWorker(&wg)
 	wg.Wait()
 }
