@@ -14,7 +14,7 @@ func HttpGetWorker(wg *sync.WaitGroup) {
 	ticker := time.NewTicker(time.Second * 2)
 	for range ticker.C {
 		urlHashMap, ok := <-message_queue.TempUrlChan
-		logger.Infof("HttpGetWorker %v", "从无缓冲通道中获取")
+		// logger.Infof("HttpGetWorker %v", "从无缓冲通道中获取")
 		uuid := urlHashMap["uuid"]
 		stationid := urlHashMap["stationid"]
 		if ok {
@@ -46,7 +46,7 @@ func HttpGetWorker(wg *sync.WaitGroup) {
 						"resp_body": body,
 						"stationid": stationid,
 					}
-					logger.Infof("%v HttpGetWorker %v", uuid, "往100缓冲通道发送json数据")
+					// logger.Infof("%v HttpGetWorker %v", uuid, "往100缓冲通道发送json数据")
 					message_queue.TempRespDataChan <- respDataHashMap
 
 				}
@@ -98,7 +98,7 @@ func HttpGetWorker(wg *sync.WaitGroup) {
 							"resp_html_body": body,
 							"stationid":      stationid,
 						}
-						logger.Infof("%v HttpGetWorker %v", uuid, "往100缓冲通道发送html数据")
+						// logger.Infof("%v HttpGetWorker %v", uuid, "往100缓冲通道发送html数据")
 						message_queue.TempRespDataChan <- respDataHashMap
 					}
 

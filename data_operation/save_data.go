@@ -106,8 +106,6 @@ func saveRtableData(respData map[string]interface{}, uuid, stationid string) {
 			if aq == "9999" {
 				aq = ""
 			}
-		} else {
-			logger.Debugf("%v-%v", uuid, "无空气质量数据")
 		}
 
 		rtableNameSqlStr := fmt.Sprintf("insert into %v (date, time, temperature,humidity,rain,icomfort,info,feelst,wind_direct,wind_power,wind_speed,warn,aqi,aq) values ('%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v','%v')", rtableName, temp_t_date, temp_t_time, temperature, humidity, rain, icomfort, info, feelst, wind_direct, wind_power, wind_speed, warn_str, aqi, aq)

@@ -104,7 +104,7 @@ func parsingHtmlData(resp_html_body []byte, uuid, stationid string) {
 
 			respData := make(map[string]interface{})
 			respData["real"] = realmap
-			logger.Infof("解析数据完成")
+			// logger.Infof("解析数据完成")
 			saveRtableData(respData, uuid, stationid)
 		}
 	}
