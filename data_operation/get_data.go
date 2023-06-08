@@ -21,7 +21,7 @@ func GetData(wg *sync.WaitGroup) {
 		for _, value := range location {
 			u4 := uuid.New()
 			uuidv4 := u4.String()
-			logger.Infof("%v %v %v %v", uuidv4, value.Stationid, value.Province, value.City, value.Url)
+			logger.Infof("%v %v %v %v", uuidv4, value.Stationid, value.Province, value.City)
 			time_stamp := strconv.FormatInt(time.Now().UnixMilli(), 10)
 			// 返回json的接口url
 			urlHashMap := map[string]string{
@@ -29,7 +29,7 @@ func GetData(wg *sync.WaitGroup) {
 				"uuid":      uuidv4,
 				"stationid": value.Stationid,
 			}
-			logger.Infof("%v %v", uuidv4, "往无缓冲通道中发送接口url")
+			// logger.Infof("%v %v", uuidv4, "往无缓冲通道中发送接口url")
 			message_queue.TempUrlChan <- urlHashMap
 			// resp_data := HttpGet(url, uuidv4)
 			// SaveData(resp_data, uuidv4, value.Stationid)
@@ -42,7 +42,7 @@ func GetData(wg *sync.WaitGroup) {
 				"stationid": value.Stationid,
 			}
 			// 无缓冲 没接收的话会阻塞
-			logger.Infof("%v %v", uuidv4, "往无缓冲通道中发送html页面url")
+			// logger.Infof("%v %v", uuidv4, "往无缓冲通道中发送html页面url")
 			message_queue.TempUrlChan <- detailUrlHashMap
 		}
 	}
