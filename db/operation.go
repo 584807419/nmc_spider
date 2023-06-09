@@ -9,6 +9,7 @@ var logger = log_manage.FSLogger
 
 func GetAllLocation() []Location {
 	// sqlStr := "select * from location where id = 1872 and valid = 1"
+	// sqlStr := "select * from location where stationid = 54455 and valid = 1"
 	sqlStr := "select * from location where valid = 1"
 	var location []Location
 	// err := DB.Select(&location, sqlStr, 0)

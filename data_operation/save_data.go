@@ -116,7 +116,7 @@ func saveRtableData(respData map[string]interface{}, uuid, stationid string) {
 				_pk := db.InsertRow(rtableNameSqlStr, uuid)
 				logger.Infof("%v %v %v%v", uuid, rtableName, "插入实时数据 pk:", _pk)
 			} else {
-				if everyr_data.Temperature == temperature {
+				if (everyr_data.Temperature == temperature) && (everyr_data.Rain == rain) && (everyr_data.Info == info) && (everyr_data.Wind_direct == wind_direct) && (everyr_data.Wind_speed == wind_speed) {
 					logger.Infof("%v %v %v %v", uuid, everyr_data.Date, everyr_data.Time, "无新数据")
 				} else {
 					logger.Infof("%v %v %v %v", uuid, everyr_data.Date, everyr_data.Time, "有新数据")
