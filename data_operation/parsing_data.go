@@ -65,6 +65,8 @@ func parsingHtmlData(resp_html_body []byte, uuid, stationid string) {
 				weather_info = "多云"
 			case "http://image.nmc.cn/assets/img/w/40x40/3/2.png":
 				weather_info = "阴"
+			case "http://image.nmc.cn/assets/img/w/40x40/3/3.png":
+				weather_info = "阵雨"
 			case "http://image.nmc.cn/assets/img/w/40x40/3/4.png":
 				weather_info = "雷阵雨"
 
@@ -90,7 +92,7 @@ func parsingHtmlData(resp_html_body []byte, uuid, stationid string) {
 			weathermap := make(map[string]interface{})
 			weathermap["info"] = weather_info
 			weathermap["humidity"] = strings.TrimSpace(strings.Replace(humidity_node, "%", "", 1))
-			weathermap["rain"] = strings.TrimSpace(strings.Replace(rain_node, "-", "0.0", 1))
+			weathermap["rain"] = strings.TrimSpace(strings.Replace(strings.Replace(rain_node, "-", "0.0", 1), "mm", "", 1))
 			weathermap["temperature"] = strings.TrimSpace(strings.Replace(temperature_node, "℃", "", 1))
 
 			windmap := make(map[string]interface{})
