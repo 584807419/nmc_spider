@@ -117,7 +117,7 @@ func parsingHtmlData(resp_html_body []byte, uuid, stationid string) {
 func ParsingDataWorker(wg *sync.WaitGroup) {
 	defer func() {
 		if err := recover(); err != nil {
-			logger.Errorf("GetData-error%v", err)
+			logger.Errorf("ParsingDataWorker-error%v", err)
 		}
 	}()
 	for {

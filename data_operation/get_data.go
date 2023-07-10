@@ -18,7 +18,7 @@ var HttpGet = http_requests.HttpGet
 func GetData(wg *sync.WaitGroup) {
 	defer func() {
 		if err := recover(); err != nil {
-			logger.Errorf("error%v", err)
+			logger.Errorf("GetData-error%v", err)
 		}
 	}()
 	for {
