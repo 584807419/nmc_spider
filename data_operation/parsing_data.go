@@ -115,6 +115,11 @@ func parsingHtmlData(resp_html_body []byte, uuid, stationid string) {
 
 // 从队列中接收消息进行处理
 func ParsingDataWorker(wg *sync.WaitGroup) {
+	defer func() {
+		if err := recover(); err != nil {
+			logger.Errorf("GetData-error%v", err)
+		}
+	}()
 	for {
 		select {
 		case respData, ok := <-message_queue.TempRespDataChan:

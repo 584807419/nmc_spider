@@ -16,6 +16,11 @@ var logger = log_manage.FSLogger
 var HttpGet = http_requests.HttpGet
 
 func GetData(wg *sync.WaitGroup) {
+	defer func() {
+		if err := recover(); err != nil {
+			logger.Errorf("error%v", err)
+		}
+	}()
 	for {
 		location := db.GetAllLocation()
 		for _, value := range location {
