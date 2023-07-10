@@ -13,7 +13,7 @@ func HttpGetWorker(wg *sync.WaitGroup) {
 	// 定时器：每隔1秒发一次请求，生产者发过来的多快咱这也要控制好速度
 	defer func() {
 		if err := recover(); err != nil {
-			logger.Errorf("GetData-error%v", err)
+			logger.Errorf("HttpGetWorker-error%v", err)
 		}
 	}()
 	ticker := time.NewTicker(time.Second * 1)
