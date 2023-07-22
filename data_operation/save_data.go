@@ -22,7 +22,7 @@ func saveRtableData(respData map[string]interface{}, uuid, stationid string) {
 		yearStr := strconv.FormatInt(int64(time.Now().Year()), 10)
 		rtableName := stationid + "r" + "_" + yearStr
 
-		//  type-switch 来判断某个 interface 变量中实际存储的变量类型
+		//  type-switch 断言来判断某个 interface 变量中实际存储的变量interface{}类型
 		var temperature any
 		switch realWeatherData["temperature"].(type) {
 		case float64:
@@ -116,7 +116,7 @@ func saveRtableData(respData map[string]interface{}, uuid, stationid string) {
 				_pk := db.InsertRow(rtableNameSqlStr, uuid)
 				logger.Infof("%v %v %v%v", uuid, rtableName, "插入实时数据 pk:", _pk)
 			} else {
-				if (everyr_data.Temperature == temperature) && (everyr_data.Rain == rain) && (everyr_data.Info == info) && (everyr_data.Wind_direct == wind_direct) && (everyr_data.Wind_speed == wind_speed) {
+				if everyr_data.Temperature == temperature {
 					logger.Infof("%v %v %v %v", uuid, everyr_data.Date, everyr_data.Time, "无新数据")
 				} else {
 					logger.Infof("%v %v %v %v", uuid, everyr_data.Date, everyr_data.Time, "有新数据")
