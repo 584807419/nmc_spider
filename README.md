@@ -11,4 +11,7 @@
 
 
 
-控制消费者Goroutine或者Channel缓冲数值即可控制频率
+## 控制频率
+1. 控制消费者Goroutine数量
+2. 控制Channel缓冲数值
+3. 消费者读Channel用了定时器Ticker

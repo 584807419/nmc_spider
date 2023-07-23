@@ -7,13 +7,15 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var DB = initDB() // 常量
+var DB = initDB() // 饿汉式单例
 
 // 建立连接池
 func initDB() (DB *sqlx.DB) {
+	fmt.Printf("建立连接池")
 	// 内网IP单独用户保证安全
 	// dsn := "nmc_spider:nmc_spider@tcp(100.100.214.47:3306)/www_nmc_cn?charset=utf8mb4&parseTime=False&loc=Local&tls=false"
-	dsn := "nmc_spider:nmc_spider@tcp(192.168.1.16:3306)/www_nmc_cn?charset=utf8mb4&parseTime=False&loc=Local&tls=false"
+	//dsn := "nmc_spider:nmc_spider@tcp(192.168.1.16:3306)/www_nmc_cn?charset=utf8mb4&parseTime=False&loc=Local&tls=false"
+	dsn := "nmc_spider:nmc_spider@tcp(pythonic.pub:3306)/www_nmc_cn?charset=utf8mb4&parseTime=False&loc=Local&tls=false"
 	// 也可以使用MustConnect连接不成功就panic
 	DB, err := sqlx.Connect("mysql", dsn)
 	if err != nil {

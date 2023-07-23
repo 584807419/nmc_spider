@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"nmc_spider/log_manage"
+	"sync/atomic"
 )
 
 var logger = log_manage.FSLogger
@@ -12,7 +13,10 @@ func GetAllLocation() []Location {
 	sqlStr := "select * from location where valid = 1"
 	var location []Location
 	// err := DB.Select(&location, sqlStr, 0)
+	atomic.AddInt32(&concurrent, 1)
+	fmt.Printf("数据库调用并发度%d\n", atomic.LoadInt32(&concurrent))
 	err := DB.Select(&location, sqlStr)
+	atomic.AddInt32(&concurrent, -1)
 	if err != nil {
 		fmt.Printf("GetAllLocation query failed, err:%v\n", err)
 	}
@@ -28,7 +32,10 @@ func GetAllProvince() []Province {
 	sqlStr := "select * from province where valid = 1"
 	var province []Province
 	// err := DB.Select(&location, sqlStr, 0)
+	atomic.AddInt32(&concurrent, 1)
+	fmt.Printf("数据库调用并发度%d\n", atomic.LoadInt32(&concurrent))
 	err := DB.Select(&province, sqlStr)
+	atomic.AddInt32(&concurrent, -1)
 	if err != nil {
 		fmt.Printf("GetAllProvince query failed, err:%v\n", err)
 	}
@@ -36,7 +43,10 @@ func GetAllProvince() []Province {
 }
 
 func InsertRow(sqlStr, uuid string) int64 {
+	atomic.AddInt32(&concurrent, 1)
+	fmt.Printf("数据库调用并发度%d\n", atomic.LoadInt32(&concurrent))
 	ret, err := DB.Exec(sqlStr)
+	atomic.AddInt32(&concurrent, -1)
 	if err != nil {
 		logger.Errorf("%v insert failed, err:%v", uuid, err)
 		return 0
@@ -50,8 +60,11 @@ func InsertRow(sqlStr, uuid string) int64 {
 }
 
 func GetData(sqlStr, uuid string) (EverydayData, error) {
+	atomic.AddInt32(&concurrent, 1)
+	fmt.Printf("数据库调用并发度%d\n", atomic.LoadInt32(&concurrent))
 	var everyday_data EverydayData
 	err := DB.Get(&everyday_data, sqlStr)
+	atomic.AddInt32(&concurrent, -1)
 	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
 			logger.Infof("%v %v %v", uuid, "没查到数据", sqlStr)
@@ -63,7 +76,11 @@ func GetData(sqlStr, uuid string) (EverydayData, error) {
 	return everyday_data, err
 }
 
+var concurrent int32
+
 func GetRData(sqlStr, uuid string) (EveryTimeData, error) {
+	atomic.AddInt32(&concurrent, 1)
+	fmt.Printf("数据库调用并发度%d\n", atomic.LoadInt32(&concurrent))
 	var everyr_data EveryTimeData
 	err := DB.Get(&everyr_data, sqlStr)
 	if err != nil {
@@ -74,6 +91,7 @@ func GetRData(sqlStr, uuid string) (EveryTimeData, error) {
 		}
 
 	}
+	atomic.AddInt32(&concurrent, -1)
 	return everyr_data, err
 }
 
@@ -88,7 +106,10 @@ func GetMultiData(sqlStr, uuid string) Location {
 }
 
 func ExecSql(sqlStr, uuid string) (int64, error) {
+	atomic.AddInt32(&concurrent, 1)
+	fmt.Printf("数据库调用并发度%d\n", atomic.LoadInt32(&concurrent))
 	ret, err := DB.Exec(sqlStr)
+	atomic.AddInt32(&concurrent, -1)
 	if err != nil {
 		logger.Errorf("%v ExecSql:%v err:%v", uuid, sqlStr, err)
 		return 0, err
@@ -103,12 +124,18 @@ func ExecSql(sqlStr, uuid string) (int64, error) {
 
 func GetLocationRec(sqlStr, uuid string) (Location, error) {
 	var location_data Location
+	atomic.AddInt32(&concurrent, 1)
+	fmt.Printf("数据库调用并发度%d\n", atomic.LoadInt32(&concurrent))
 	err := DB.Get(&location_data, sqlStr)
+	atomic.AddInt32(&concurrent, -1)
 	return location_data, err
 }
 
 func GetLocationData(sqlStr, uuid string) Location {
 	var location_data Location
+	atomic.AddInt32(&concurrent, 1)
+	fmt.Printf("数据库调用并发度%d\n", atomic.LoadInt32(&concurrent))
 	_ = DB.Get(&location_data, sqlStr)
+	atomic.AddInt32(&concurrent, -1)
 	return location_data
 }

@@ -144,6 +144,5 @@ func ParsingDataWorker(wg *sync.WaitGroup) {
 		// default:
 		// logger.Infof("从100缓冲通道 没拿到消息")
 	}
+	//wg.Done()
 }
-
-// wg.Done()

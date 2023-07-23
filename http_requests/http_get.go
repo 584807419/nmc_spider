@@ -31,17 +31,20 @@ func HttpGet(url, uuid string) []byte {
 	req.Header.Add("Pragma", "no-cache")
 	req.Header.Add("Cache-Control", "no-cache")
 	resp, err := HttpClient.Do(req)
-
+	err = resp.Body.Close()
+	if err != nil {
+		logger.Errorf("%v Close %v", uuid, err)
+	}
 	if err != nil {
 		logger.Errorf("%v HttpGet1 %v", uuid, err)
-		_temp_resp := []byte{}
-		return _temp_resp
+		var tempResp []byte
+		return tempResp
 	} else {
-		defer resp.Body.Close()
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			logger.Errorf("%v HttpGet2 %v", uuid, err)
 		}
 		return body
 	}
+
 }
