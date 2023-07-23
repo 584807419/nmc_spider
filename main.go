@@ -9,9 +9,13 @@ import (
 func main() {
 	// data_operation.GetProvinceData()
 	var wg sync.WaitGroup
-	wg.Add(3)
+	wg.Add(5) //计数器 +3
 	go data_operation.GetData(&wg)
 	go http_requests.HttpGetWorker(&wg)
+	go http_requests.HttpGetWorker(&wg)
+	go http_requests.HttpGetWorker(&wg)
 	go data_operation.ParsingDataWorker(&wg)
-	wg.Wait()
+	go data_operation.ParsingDataWorker(&wg)
+	go data_operation.ParsingDataWorker(&wg)
+	wg.Wait() // 阻塞，直到 WaitGroup 的计数器的值为 0 才会解除阻塞状态，爬虫需要一直运行，不会调用 wg.Done 将计数器 -1
 }
