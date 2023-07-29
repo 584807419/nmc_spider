@@ -15,3 +15,9 @@
 1. 控制消费者Goroutine数量
 2. 控制Channel缓冲数值
 3. 消费者读Channel用了定时器Ticker
+
+## linux打包
+SET CGO_ENABLED=0
+SET GOARCH=amd64
+SET GOOS=linux
+SET GOOS=linux

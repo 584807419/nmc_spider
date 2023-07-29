@@ -27,10 +27,10 @@ func GetData(wg *sync.WaitGroup) {
 			u4 := uuid.New()
 			uuidv4 := u4.String()
 			logger.Infof("%v %v %v %v", uuidv4, value.Stationid, value.Province, value.City)
-			time_stamp := strconv.FormatInt(time.Now().UnixMilli(), 10)
+			timeStamp := strconv.FormatInt(time.Now().UnixMilli(), 10)
 			// 返回json的接口url
 			urlHashMap := map[string]string{
-				"url":       "http://www.nmc.cn/rest/weather?stationid=" + value.Stationid + "&_=" + time_stamp,
+				"url":       "http://www.nmc.cn/rest/weather?stationid=" + value.Stationid + "&_=" + timeStamp,
 				"uuid":      uuidv4,
 				"stationid": value.Stationid,
 			}
@@ -59,13 +59,13 @@ func GetProvinceData() {
 	logger.Infof("%v", "开始逐个处理表中的市区县信息")
 	for _, value := range province {
 		u4 := uuid.New()
-		uuidv4 := u4.String()
-		logger.Infof("%v %v-%v", uuidv4, value.Name, value.Abbr)
-		time_stamp := strconv.FormatInt(time.Now().UnixMilli(), 10)
-		url := "http://www.nmc.cn/rest/province/" + value.Abbr + "?_=" + time_stamp
-		logger.Infof("%v %v", uuidv4, "获取市区县信息")
-		resp_data := HttpGet(url, uuidv4)
-		SaveProvinceCityData(resp_data, uuidv4)
+		uuidV4 := u4.String()
+		logger.Infof("%v %v-%v", uuidV4, value.Name, value.Abbr)
+		timeStamp := strconv.FormatInt(time.Now().UnixMilli(), 10)
+		url := "http://www.nmc.cn/rest/province/" + value.Abbr + "?_=" + timeStamp
+		logger.Infof("%v %v", uuidV4, "获取市区县信息")
+		respData := HttpGet(url, uuidV4)
+		SaveProvinceCityData(respData, uuidV4)
 		time.Sleep(5 * time.Second)
 	}
 	logger.Infof("%v", "表中所有的市区县信息全部处理完成")
