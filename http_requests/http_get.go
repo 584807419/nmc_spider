@@ -31,7 +31,7 @@ func HttpGet(url, uuid string) []byte {
 	req.Header.Add("Pragma", "no-cache")
 	req.Header.Add("Cache-Control", "no-cache")
 	resp, err := HttpClient.Do(req)
-	err = resp.Body.Close()
+	defer resp.Body.Close()
 	if err != nil {
 		logger.Errorf("%v Close %v", uuid, err)
 	}
