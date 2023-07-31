@@ -20,4 +20,4 @@
 SET CGO_ENABLED=0
 SET GOARCH=amd64
 SET GOOS=linux
-SET GOOS=linux
+go build nmc_spider
