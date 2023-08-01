@@ -17,7 +17,10 @@
 3. 消费者读Channel用了定时器Ticker
 
 ## linux打包
-SET CGO_ENABLED=0
-SET GOARCH=amd64
-SET GOOS=linux
-go build nmc_spider
+`SET CGO_ENABLED=0`
+
+`SET GOARCH=amd64`
+
+`SET GOOS=linux`
+
+`go build nmc_spider`
