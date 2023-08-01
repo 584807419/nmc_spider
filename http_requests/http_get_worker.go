@@ -46,10 +46,6 @@ func HttpGetWorker(wg *sync.WaitGroup) {
 				atomic.AddInt32(&concurrent, -1)
 				if err != nil {
 					logger.Errorf("%v HttpGet1 %v", uuid, err)
-					err = resp.Body.Close()
-					if err != nil {
-						logger.Errorf("%v close http request %v", uuid, err)
-					}
 					continue
 				} else {
 					body, err := io.ReadAll(resp.Body)
@@ -91,10 +87,6 @@ func HttpGetWorker(wg *sync.WaitGroup) {
 				atomic.AddInt32(&concurrent, -1)
 				if err != nil {
 					logger.Errorf("%v HttpGet1 %v", uuid, err)
-					err = resp.Body.Close()
-					if err != nil {
-						logger.Errorf("%v Close %v", uuid, err)
-					}
 					continue
 				} else {
 					// //获取响应体
