@@ -24,3 +24,14 @@
 `SET GOOS=linux`
 
 `go build nmc_spider`
+
+## 数据库
+`docker pull mariadb`
+
+`docker run -d -P --name 名字 -e MYSQL_ROOT_PASSWORD=密码 mariadb`
+   
+-P 参数，Docker 自动分配一个未被使用的端口，docker ps -a 看一下端口号
+
+挂载数据卷，以挂载本地 /data/Db/mariadb 为例
+
+`docker run -d --name mariadb_volume -P -v /data/Db/mariadb:/var/lib/mysql mariadb`
